@@ -49,7 +49,7 @@ const userSchema = new Schema<IUser>({
     },
     userRole: {
         type: String,
-        enum: ["user", "manager"],
+        enum: ["user", "manager", "admin", "developer", "designer", "tester", "product_owner", "scrum_master"],
         default: "user"
     },
     phoneNumber: {
