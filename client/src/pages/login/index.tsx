@@ -75,8 +75,8 @@ export default function Login() {
             </div>
 
             {/* Right side - Login Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-                <Card className="w-full max-w-md backdrop-blur-sm bg-white/90 shadow-2xl">
+            <div className="w-full lg:w-1/2 flex items-center justify-center    ">
+                <Card className="w-full max-w-md backdrop-blur-sm bg-white/90 shadow-2xl p-8 rounded-xl">
                     <CardHeader className="space-y-1 text-center py-10">
                         <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             Welcome Back
@@ -87,7 +87,7 @@ export default function Login() {
                     </CardHeader>
                     <CardContent>
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
                                 <FormField
                                     control={form.control}
                                     name="email"
