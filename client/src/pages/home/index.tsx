@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 export default function Home() {
     return (
         <main className="min-h-screen">
@@ -36,7 +38,7 @@ export default function Home() {
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <button className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:scale-105 transition-all group">
                                     <span className="flex items-center gap-2">
-                                        Get Started
+                                        <NavLink to="/login">Get Started</NavLink>
                                         <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                         </svg>
