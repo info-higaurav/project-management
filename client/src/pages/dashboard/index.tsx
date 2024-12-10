@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { LogOut } from "lucide-react";
 import axios from "axios";
+import { Loader } from "../../helper/loader";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -36,7 +37,7 @@ export default function Dashboard() {
   },[])
 
   if(loading){
-    return <div>Loading...</div>
+    return <Loader/>
   }
   if(error){
     return <div>Error: {error}</div>
