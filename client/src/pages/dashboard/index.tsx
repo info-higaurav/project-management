@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
+import { LogOut } from "lucide-react";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -82,13 +83,29 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 overflow-hidden">
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="md:hidden fixed top-4 right-4 z-50 rounded-md w-12 p-2.5 border-none backdrop-blur-lg text-white border border-white/20"
-      >
-        {isMobileMenuOpen ? "✕" : "☰"}
-      </button>
+      {/* Mobile Menu & Notification Container */}
+      <div className="md:hidden fixed top-4 right-4 z-10 flex items-center space-x-2">
+        <div className="relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+            className="relative w-10 h-10 rounded-full backdrop-blur-lg bg-black/10 text-white"
+          >
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-pink-500 rounded-full text-white text-xs flex items-center justify-center">
+              3
+            </span>
+            🔔
+          </Button>
+        </div>
+        
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="rounded-md w-10 h-10 flex items-center justify-center backdrop-blur-lg bg-black/10 text-white"
+        >
+          {isMobileMenuOpen ? "✕" : "☰"}
+        </button>
+      </div>
 
       {/* Left Drawer - Mobile */}
       <div className={`
@@ -138,6 +155,18 @@ export default function Dashboard() {
             ))}
           </ul>
         </nav>
+
+        {/* Logout Button in Drawer - Mobile Only */}
+        <div className="md:hidden p-6 border-t border-white/10">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/login")}
+            className="w-full flex items-center justify-center space-x-2 p-3 rounded-xl text-white hover:bg-white/10"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Logout</span>
+          </Button>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -145,20 +174,20 @@ export default function Dashboard() {
         {/* Top Bar */}
         <header className="bg-black/10 backdrop-blur-xl">
           <div className="flex items-center justify-between px-4 sm:px-8 py-4">
-            <div className="w-full max-w-xl">
+            <div className="flex-1 max-w-[50%] md:max-w-xl">
               <div className="relative">
                 <Input 
                   type="search"
-                  placeholder="Search anything..."
-                  className="w-full pl-12 pr-4 py-2.5 rounded-full border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:border-purple-500 focus:ring-purple-500/20 transition-all duration-300"
+                  placeholder="Search..."
+                  className="w-full pl-8 pr-4 py-2 rounded-full border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:border-purple-500 focus:ring-purple-500/20 transition-all duration-300 text-sm md:text-base"
                 />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/50 text-sm">
                   🔍
                 </span>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-4">
               <div className="relative">
                 <Button
                   variant="ghost"
@@ -171,33 +200,34 @@ export default function Dashboard() {
                   </span>
                   🔔
                 </Button>
-
-                {isNotificationsOpen && (
-                  <div className="absolute  right-0 mt-4 w-72 sm:w-96 bg-black/20 backdrop-blur-xl rounded-2xl shadow-xl border border-white/10 py-2 z-50">
-                    {notifications.map((notification) => (
-                      <div 
-                        key={notification.id}
-                        className="px-4 py-3  hover:bg-white/10 cursor-pointer transition-colors"
-                      >
-                        <p className="text-sm text-white">{notification.message}</p>
-                        <p className="text-xs text-white/70 mt-1">{notification.time}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
               <Button 
                 variant="ghost"
                 onClick={() => navigate("/login")}
-                className="flex items-center space-x-2 px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all duration-300"
+                className="flex justify-center items-center border px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all duration-300"
               >
-                <span>🚪</span>
-                <span className="hidden sm:inline">Logout</span>
+                <LogOut className="w-5 h-5 mr-2"/>
+                <span>Logout</span>
               </Button>
             </div>
           </div>
         </header>
+
+        {/* Notifications Dropdown - Positioned Relative to Screen */}
+        {isNotificationsOpen && (
+          <div className="fixed right-4 top-16 w-[calc(100%-2rem)] sm:w-96 bg-black/20 backdrop-blur-xl rounded-2xl shadow-xl border border-white/10 py-2 z-50 max-h-[80vh] overflow-y-auto">
+            {notifications.map((notification) => (
+              <div 
+                key={notification.id}
+                className="px-4 py-3 hover:bg-white/10 cursor-pointer transition-colors"
+              >
+                <p className="text-sm text-white">{notification.message}</p>
+                <p className="text-xs text-white/70 mt-1">{notification.time}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Dashboard Content */}
         <main className="flex-1 p-4 sm:p-8 overflow-y-auto custom-scrollbar">
