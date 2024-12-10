@@ -87,3 +87,11 @@ export const login = async(req:Request, res:Response , next:NextFunction)=>{
    return ApiResponse.success([],"login successfully",200).send(res);
 
 }
+
+export const profile = async(req:Request & {user?: any}, res:Response, next:NextFunction)=>{
+   const userServices = new UserServices();
+   const profile = await userServices.getUser(req.user._id);
+   return ApiResponse.success([profile], "profile fetched successfully", 200).send(res);
+   
+   
+}

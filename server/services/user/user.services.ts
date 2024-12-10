@@ -16,6 +16,11 @@ class UserServices {
         return result
     }
 
+    async getUser(id:string){
+        const response = await User.findById(id).select('-password -accessToken -refreshToken');
+        return response;
+    }
+
    async createUser (data:SignupInput){
         const {password, ...userDate} = data;
         const encryptedPassword = await bcrypt.hash(password, 10);

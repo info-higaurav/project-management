@@ -1,14 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { LogOut } from "lucide-react";
+import axios from "axios";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [data , setData] = useState<any>({})
+  const [loading , setLoading] = useState(false)
+  const [error , setError] = useState("")
+
+  useEffect(()=>{
+    (async()=>{
+      try {
+        setLoading(true)
+        const accessToken = localStorage.getItem("accessToken") || "";
+        const response = await axios.get("http://localhost:4000/api/v1/users/profile", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          },
+          withCredentials: true
+        })
+        setData(response.data.data[0])
+      } catch (error:any) {
+        setError(error.response.data.message)
+      }finally{
+        setLoading(false)
+      }
+      
+    })()
+  },[])
+
+  if(loading){
+    return <div>Loading...</div>
+  }
+  if(error){
+    return <div>Error: {error}</div>
+  }
 
   const notifications = [
     {
@@ -30,6 +62,7 @@ export default function Dashboard() {
 
   const drawerTabs = [
     { name: "Home", icon: "🏠" },
+    { name: "Profile", icon: "👤" },
     { name: "Team", icon: "👥" },
     { name: "Users", icon: "👤" },
     { name: "Projects", icon: "📁" },
@@ -41,6 +74,43 @@ export default function Dashboard() {
     { name: "Analytics", icon: "📈" },
     { name: "Settings", icon: "⚙️" }
   ];
+
+  const ProfileTab = () => {
+    return (
+      <div className="space-y-6">
+        <div className="bg-black/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
+          <h2 className="text-2xl font-bold text-white mb-4">Profile Information</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-white/70 mb-1">Full Name</h3>
+              <p className="text-white text-lg">{data.firstName} {data.lastName}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-white/70 mb-1">Email</h3>
+              <p className="text-white text-lg">{data.emailAddress}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-white/70 mb-1">Role</h3>
+              <p className="text-white text-lg capitalize">{data.role || 'User'}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-white/70 mb-1">Status</h3>
+              <p className="text-white text-lg capitalize">{data.status || 'Active'}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-white/70 mb-1">Member Since</h3>
+              <p className="text-white text-lg">{new Date(data.createdAt).toLocaleDateString()}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const renderContent = () => {
     if (activeTab === "Home") {
@@ -77,6 +147,8 @@ export default function Dashboard() {
           </div>
         </div>
       );
+    } else if (activeTab === "Profile") {
+      return <ProfileTab />;
     }
     return null;
   };
@@ -129,8 +201,8 @@ export default function Dashboard() {
               className="w-full h-full object-cover"
             />
           </div>
-          <h3 className="mt-4 text-xl font-semibold text-white">John Doe</h3>
-          <p className="text-sm text-white/70">Senior Project Manager</p>
+          <h3 className="mt-4 text-xl font-semibold text-white">{data.firstName} {data.lastName}</h3>
+          <p className="text-sm text-white/70">{data.emailAddress}</p>
         </div>
 
         <nav className="flex-1 overflow-y-auto custom-scrollbar">
