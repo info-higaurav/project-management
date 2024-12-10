@@ -25,4 +25,9 @@ export const signupSchema = z.object({
     profilePicture: z.string().optional()
 })
 
+export const loginValidation = z.object({
+    emailAddress: signupSchema.shape.emailAddress, // Reusing email validation from signupSchema
+    password: signupSchema.shape.password, // Reusing password validation from signupSchema
+});
+
 export type SignupInput = z.infer<typeof signupSchema>

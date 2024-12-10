@@ -11,6 +11,11 @@ class UserServices {
         return result
     }
 
+    async validateLogin (data:SignupInput){
+        const result = await signupSchema.parseAsync(data)
+        return result
+    }
+
    async createUser (data:SignupInput){
         const {password, ...userDate} = data;
         const encryptedPassword = await bcrypt.hash(password, 10);
@@ -19,6 +24,10 @@ class UserServices {
         return userWithoutPassword;
     }
 
+async verifyPassword (password:String, hashedPassword:String){
+    const response = await bcrypt.compare(password as string , hashedPassword as string);
+    return response;
+}
 
     async isUserExists (emailAddress:string){
         const res = await User.find({emailAddress:emailAddress});

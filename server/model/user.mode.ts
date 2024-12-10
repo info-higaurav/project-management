@@ -54,9 +54,6 @@ const userSchema = new Schema<IUser>({
     },
     phoneNumber: {
         type: String,
-        unique: true,
-        default: "",
-        sparse: true // Allows empty string values to not trigger unique constraint
     },
     dateOfBirth: {
         type: String,

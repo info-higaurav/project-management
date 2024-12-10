@@ -13,9 +13,13 @@ import {
 import { Input } from "../../components/ui/input"
 import { Checkbox } from "../../components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card"
+import axios from 'axios'
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
+// Strong password validation schema
 const formSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  emailAddress: z.string().email("Invalid email address"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -29,14 +33,38 @@ export default function Login() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            email: "",
+            emailAddress: "",
             password: "",
             rememberMe: false,
         },
     })
+    const [err, setErr] = useState('')
+    const navigate = useNavigate()
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        try {
+            const res = await axios.post(
+                "http://localhost:4000/api/v1/users/login", 
+                values, 
+                { 
+                    headers: { "Content-Type": "application/json" }, 
+                    withCredentials: true 
+                }
+            )
+            if(res.status === 200){ // Use strict equality
+                form.reset();
+                navigate("/dashboard")
+            }
+        } catch (error: any) {
+            console.error(error) // Use console.error for errors
+            setErr(error.response?.data.message)
+        }
+        finally {
+            // Clear error message after 2 seconds
+            setTimeout(() => {
+                setErr('')
+            }, 2000)
+        }
     }
 
     return (
@@ -75,7 +103,7 @@ export default function Login() {
             </div>
 
             {/* Right side - Login Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center    ">
+            <div className="w-full lg:w-1/2 flex items-center justify-center">
                 <Card className="w-full max-w-md backdrop-blur-sm bg-white/90 shadow-2xl p-8 rounded-xl">
                     <CardHeader className="space-y-1 text-center py-10">
                         <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -87,10 +115,10 @@ export default function Login() {
                     </CardHeader>
                     <CardContent>
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                                 <FormField
                                     control={form.control}
-                                    name="email"
+                                    name="emailAddress"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-gray-700">Email Address</FormLabel>
@@ -98,7 +126,7 @@ export default function Login() {
                                                 <Input 
                                                     placeholder="Enter your email" 
                                                     {...field}
-                                                    className="rounded-lg border-gray-300 focus:border-purple-400 focus:ring-purple-400"
+                                                    className="rounded-lg placeholder:text-gray-400 border-gray-300 focus:border-purple-400 focus:ring-purple-400"
                                                 />
                                             </FormControl>
                                             <FormMessage className="text-red-500" />
@@ -117,7 +145,7 @@ export default function Login() {
                                                     type="password" 
                                                     placeholder="Enter your password" 
                                                     {...field}
-                                                    className="rounded-lg border-gray-300 focus:border-purple-400 focus:ring-purple-400"
+                                                    className="rounded-lg placeholder:text-gray-400 border-gray-300 focus:border-purple-400 focus:ring-purple-400"
                                                 />
                                             </FormControl>
                                             <FormMessage className="text-red-500" />
@@ -153,12 +181,13 @@ export default function Login() {
                                 >
                                     Sign In
                                 </Button>
+                                {err && <p className="text-center text-red-600">{err}</p>}
                             </form>
                         </Form>
 
                         <p className="mt-6 text-center text-sm text-gray-600">
                             Don't have an account?{' '}
-                            <a href="#" className="font-medium text-purple-600 hover:text-purple-500 transition-colors">
+                            <a href="/signup" className="font-medium text-purple-600 hover:text-purple-500 transition-colors">
                                 Sign up
                             </a>
                         </p>

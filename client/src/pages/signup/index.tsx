@@ -7,13 +7,11 @@ import { Button } from "../../components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../components/ui/form";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Toast } from "../../components/ui/toast";
-
-import { cn } from "../../lib/utils";
 import { useNavigate } from "react-router-dom";
 
+// Schema for signup form validation
 const signupSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
+  emailAddress: z.string().email({ message: "Invalid email address" }),
   password: z.string()
     .min(8, { message: "Password must be at least 8 characters" })
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
@@ -27,39 +25,52 @@ const signupSchema = z.object({
 
 export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      email: "",
+      emailAddress: "",
       password: "",
       confirmPassword: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof signupSchema>) {
+    const { confirmPassword, ...data } = values;
     try {
       setIsLoading(true);
-      const response = await axios.post("/api/auth/signup", values);
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/users/signup",
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true
+        }
+      );
+      
       if (response.status === 201) {
-        Toast({
-          title: "Account created successfully",
-        });
         form.reset();
+        navigate("/dashboard");
+        return;
       }
+      
     } catch (error: any) {
-      Toast({
-        variant: "destructive",
-        title: error?.response?.data?.message || "Something went wrong",
-      });
+      console.error(error); // Using console.error for errors
+      setError(error.response?.data.message);
     } finally {
       setIsLoading(false);
+      setTimeout(() => {
+        setError('');
+      }, 2000);
     }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center p-6">
       <div className="container max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
+        {/* Left side - Features */}
         <div className="w-full lg:w-1/2 text-white space-y-8 p-8">
           <div className="flex items-center text-2xl font-bold mb-8">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -100,6 +111,7 @@ export default function Signup() {
           </div>
         </div>
 
+        {/* Right side - Signup Form */}
         <div className="w-full max-w-[420px] bg-white/95 dark:bg-zinc-900/95 rounded-2xl shadow-xl backdrop-blur-sm">
           <div className="p-8">
             <div className="flex flex-col space-y-3 text-center mb-8">
@@ -114,13 +126,13 @@ export default function Signup() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="emailAddress"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">Work Email</FormLabel>
                       <FormControl>
                         <Input 
-                          className="bg-gray-50/50 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
+                          className="bg-gray-50/50 placeholder:text-gray-400 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
                           placeholder="name@company.com" 
                           {...field} 
                         />
@@ -137,7 +149,7 @@ export default function Signup() {
                       <FormLabel className="text-base">Password</FormLabel>
                       <FormControl>
                         <Input 
-                          className="bg-gray-50/50 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
+                          className="bg-gray-50/50 placeholder:text-gray-400 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
                           type="password" 
                           placeholder="Create a secure password" 
                           {...field} 
@@ -155,7 +167,7 @@ export default function Signup() {
                       <FormLabel className="text-base">Confirm Password</FormLabel>
                       <FormControl>
                         <Input 
-                          className="bg-gray-50/50 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
+                          className="bg-gray-50/50 placeholder:text-gray-400 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
                           type="password" 
                           placeholder="Verify your password" 
                           {...field} 
@@ -165,12 +177,17 @@ export default function Signup() {
                     </FormItem>
                   )}
                 />
-                <Button className="w-full bg-gradient-to-r rounded-xl from-blue-500 via-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity text-lg font-medium h-11" type="submit" disabled={isLoading}>
+                <Button 
+                  className="w-full bg-gradient-to-r rounded-xl from-blue-500 via-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity text-lg font-medium h-11" 
+                  type="submit" 
+                  disabled={isLoading}
+                >
                   {isLoading && (
                     <span className="mr-2 h-5 w-5 animate-spin">⌛</span>
                   )}
                   Create Account
                 </Button>
+                {error && <p className="text-center text-orange-600">{error}</p>}
               </form>
             </Form>
             <p className="text-center text-sm text-muted-foreground mt-6">
