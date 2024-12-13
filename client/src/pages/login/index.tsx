@@ -15,7 +15,7 @@ import { Checkbox } from "../../components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card"
 import axios from 'axios'
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 
 // Strong password validation schema
 const formSchema = z.object({
@@ -187,9 +187,9 @@ export default function Login() {
 
                         <p className="mt-6 text-center text-sm text-gray-600">
                             Don't have an account?{' '}
-                            <a href="/signup" className="font-medium text-purple-600 hover:text-purple-500 transition-colors">
+                            <NavLink to="/signup" className="font-medium text-purple-600 hover:text-purple-500 transition-colors">
                                 Sign up
-                            </a>
+                            </NavLink>
                         </p>
                     </CardContent>
                 </Card>

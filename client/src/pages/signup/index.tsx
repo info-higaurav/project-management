@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../components/ui/form";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -192,12 +192,12 @@ export default function Signup() {
             </Form>
             <p className="text-center text-sm text-muted-foreground mt-6">
               Already have an account?{" "}
-              <Link
+              <NavLink
                 to="/login"
                 className="text-[#FF4B4B] hover:text-[#2EADA4] transition-colors font-medium"
               >
                 Sign in
-              </Link>
+              </NavLink>
             </p>
           </div>
         </div>
