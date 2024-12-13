@@ -11,16 +11,16 @@ const verifyUser = async (req: AuthRequest, res: Response, next: NextFunction): 
 try {
     const token = req.headers.authorization?.split(' ')[1] || req.cookies.accessToken;
     if(!token){
-        return ApiResponse.failure([], "access token is required", 401).send(res);
+        return ApiResponse.failure([], "Access token is required", 401).send(res);
     }
     const deccode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string);
     if(!deccode){
-        return ApiResponse.failure([], "invalid access token", 401).send(res);
+        return ApiResponse.failure([], "Invalid access token", 401).send(res);
     }
     req.user = deccode;
     next();
 } catch (error) {
-    return ApiResponse.failure([], "invalid access token", 401).send(res);
+    return ApiResponse.failure([], "Invalid access token", 401).send(res);
 }
 }
 

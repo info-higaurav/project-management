@@ -95,3 +95,9 @@ export const profile = async(req:Request & {user?: any}, res:Response, next:Next
    
    
 }
+
+export const logout = async(req:Request, res:Response, next:NextFunction)=>{
+   res.clearCookie("accessToken")
+   res.clearCookie("refreshToken")
+   return ApiResponse.success([], "logout successfully", 200).send(res)
+}

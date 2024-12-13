@@ -5,6 +5,8 @@ import { Input } from "../../components/ui/input";
 import { LogOut } from "lucide-react";
 import axios from "axios";
 import { Loader } from "../../helper/loader";
+import Expire from "@/helper/expire";
+import Profile from "../profile";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -30,6 +32,9 @@ export default function Dashboard() {
         setData(response.data.data[0])
       } catch (error:any) {
         setError(error.response.data.message)
+        setTimeout(()=>{
+          navigate("/login")
+        },5000)
       }finally{
         setLoading(false)
       }
@@ -41,7 +46,26 @@ export default function Dashboard() {
     return <Loader/>
   }
   if(error){
-    return <div>Error: {error}</div>
+    return <Expire message={error}/>
+  }
+
+  const handleLogout = async() => {
+    try {
+      const endpoint = import.meta.env.VITE_API_URL;
+      const response = await axios.get(`${endpoint}/api/v1/users/logout`, {
+        withCredentials: true
+      })
+      if(response.status === 200){
+        console.log(response.data)
+        setTimeout(()=>{
+          navigate("/login")
+        },5000)
+      }
+      
+    } catch (error) {
+      console.log(error)
+
+    }
   }
 
   const notifications = [
@@ -76,44 +100,9 @@ export default function Dashboard() {
     { name: "Analytics", icon: "📈" },
     { name: "Settings", icon: "⚙️" }
   ];
+  const notAllowedToUser = ["Team", "Reports", "Users", "Documents", "Analytics", "Settings","Projects"]
 
-  const ProfileTab = () => {
-    return (
-      <div className="space-y-6">
-        <div className="bg-black/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
-          <h2 className="text-2xl font-bold text-white mb-4">Profile Information</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-white/70 mb-1">Full Name</h3>
-              <p className="text-white text-lg">{data.firstName} {data.lastName}</p>
-            </div>
-            
-            <div>
-              <h3 className="text-white/70 mb-1">Email</h3>
-              <p className="text-white text-lg">{data.emailAddress}</p>
-            </div>
-            
-            <div>
-              <h3 className="text-white/70 mb-1">Role</h3>
-              <p className="text-white text-lg capitalize">{data.role || 'User'}</p>
-            </div>
-            
-            <div>
-              <h3 className="text-white/70 mb-1">Status</h3>
-              <p className="text-white text-lg capitalize">{data.status || 'Active'}</p>
-            </div>
-            
-            <div>
-              <h3 className="text-white/70 mb-1">Member Since</h3>
-              <p className="text-white text-lg">{new Date(data.createdAt).toLocaleDateString()}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
+  console.log(drawerTabs.filter(tab => data.userRole !== "user" ? tab : []))
   const renderContent = () => {
     if (activeTab === "Home") {
       return (
@@ -131,7 +120,7 @@ export default function Dashboard() {
           {/* Team Performance Card */}
           <div className="bg-black/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Team Performance</h3>
+              <h3 className="text-lg font -semibold text-white">Team Performance</h3>
               <span className="text-3xl">📈</span>
             </div>
             <p className="text-3xl font-bold text-white">87%</p>
@@ -150,7 +139,7 @@ export default function Dashboard() {
         </div>
       );
     } else if (activeTab === "Profile") {
-      return <ProfileTab />;
+      return <Profile data={data} />;
     }
     return null;
   };
@@ -209,7 +198,7 @@ export default function Dashboard() {
 
         <nav className="flex-1 overflow-y-auto custom-scrollbar">
           <ul className="p-6 space-y-3">
-            {drawerTabs.map((tab) => (
+            {drawerTabs.filter(tabs=> !notAllowedToUser.includes(tabs.name)).map((tab) => (
               <li key={tab.name}>
                 <button 
                   onClick={() => {
@@ -234,7 +223,7 @@ export default function Dashboard() {
         <div className="md:hidden p-6 border-t border-white/10">
           <Button
             variant="ghost"
-            onClick={() => navigate("/login")}
+            onClick={handleLogout}      
             className="w-full flex items-center justify-center space-x-2 p-3 rounded-xl text-white hover:bg-white/10"
           >
             <LogOut className="w-5 h-5" />
@@ -278,7 +267,7 @@ export default function Dashboard() {
 
               <Button 
                 variant="ghost"
-                onClick={() => navigate("/login")}
+                onClick={handleLogout}
                 className="flex justify-center items-center border px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all duration-300"
               >
                 <LogOut className="w-5 h-5 mr-2"/>

@@ -1,6 +1,0 @@
-PORT = 4000
-DB_URI="mongodb+srv://project-manager:mHXmldaEnxc0Qw8l@higaurav.xe2hy4h.mongodb.net/?retryWrites=true&w=majority&appName=higaurav"
-ACCESS_TOKEN_SECRET="dK8#mP9$vL2@nQ5*xR7&jH3^wY9!cF4"
-REFRESH_TOKEN_SECRET="tB5#hN8$pX2@mV6*kL9&rJ4^wC7!yF3"
-ACCESS_TOKEN_EXPIRY="1d"
-REFRESH_TOKEN_EXPIRY="10d"
