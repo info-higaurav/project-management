@@ -1,7 +1,15 @@
 import { NavLink } from "react-router-dom";
+import HowItWork from "../how-it-work";
+import Testmonials from "../testmonials";
+import CallToAction from "../call-to-action";
+import Pricing from "../pricing";
+import About from "../about";
+import ContactUs from "../contact-us";
+import Footer from "../footer";
 
 export default function Home() {
     return (
+        <>
         <main className="min-h-screen">
             {/* Hero Section */}
             <div className="relative bg-[#0A0F1C] overflow-hidden">
@@ -170,5 +178,15 @@ export default function Home() {
                 </div>
             </div>
         </main>
+        <HowItWork/>
+        <Testmonials/>
+        <CallToAction/>
+        <Pricing/>
+        <About />
+        <ContactUs/>
+        <Footer/>
+
+        </>
+
     );
 }
