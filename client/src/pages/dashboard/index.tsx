@@ -20,7 +20,8 @@ export default function Dashboard() {
       try {
         setLoading(true)
         const accessToken = localStorage.getItem("accessToken") || "";
-        const response = await axios.get("http://localhost:4000/api/v1/users/profile", {
+        const endpoint = import.meta.env.VITE_API_URL;
+        const response = await axios.get(`${endpoint}/api/v1/users/profile`, {
           headers: {
             Authorization: `Bearer ${accessToken}`
           },

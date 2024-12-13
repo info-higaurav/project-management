@@ -41,8 +41,9 @@ export default function Signup() {
     const { confirmPassword, ...data } = values;
     try {
       setIsLoading(true);
+      const endpoint = import.meta.env.VITE_API_URL;
       const response = await axios.post(
-        "http://localhost:4000/api/v1/users/signup",
+        `${endpoint}/api/v1/users/signup`,
         data,
         {
           headers: { "Content-Type": "application/json" },

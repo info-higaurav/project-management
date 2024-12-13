@@ -15,6 +15,9 @@ async function start() {
         const res = await connectDb();
         console.log(res)
         
+        app.get("/", (req, res) => {
+            res.send("Hello World");
+        }); 
         // Start Express server
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

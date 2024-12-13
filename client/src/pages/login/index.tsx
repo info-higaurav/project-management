@@ -43,12 +43,14 @@ export default function Login() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
+            const endpoint = import.meta.env.VITE_API_URL;
+                
             const res = await axios.post(
-                "http://localhost:4000/api/v1/users/login", 
-                values, 
-                { 
-                    headers: { "Content-Type": "application/json" }, 
-                    withCredentials: true 
+                `${endpoint}/api/v1/users/login`,
+                values,
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true
                 }
             )
             if(res.status === 200){ // Use strict equality

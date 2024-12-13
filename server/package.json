@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.ts",
+    "dev": "nodemon ./api/index.ts",
     "build": "tsc",
-    "start": "node ./dist/src/index.js"
+    "start": "node ./dist/api/index.js"
   },
   "author": "Gaurav Kumar",
   "license": "ISC",
@@ -27,7 +27,8 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.10.1",
+    "@types/node": "^22.10.2",
+    "@vercel/node": "^5.0.0",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
