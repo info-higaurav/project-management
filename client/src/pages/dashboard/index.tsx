@@ -8,6 +8,8 @@ import { Loader } from "../../helper/loader";
 import Expire from "@/helper/expire";
 import Profile from "../profile";
 import Users from "../users";
+import { AccessDenied } from "../access-denied";
+import Project from "../project";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -101,7 +103,7 @@ console.log(data.userRole)
     { name: "Analytics", icon: "📈" },
     { name: "Settings", icon: "⚙️" }
   ];
-
+console.log(data)
 
   const renderContent = () => {
     if (activeTab === "Home") {
@@ -140,8 +142,11 @@ console.log(data.userRole)
       );
     } else if (activeTab === "Profile") {
       return <Profile data={data} />;
-    }else if(activeTab === "Users" && data.userRole === "admin"){
-      return <Users/>
+    }else if(activeTab === "Users"){
+      return data.userRole === "admin" ? <Users/> : <AccessDenied/>
+    }else if (activeTab === "Projects"){
+      const roles = ["admin","manager"]
+      return roles.includes(data.userRole) ? <Project userRole={data.userRole}/> : <AccessDenied/>
     }
     return null;
   };
