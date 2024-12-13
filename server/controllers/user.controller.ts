@@ -8,7 +8,6 @@ export const healthCheckup = async( _:Response , res:Response)=>{
 }
 
 export const signup = async(req:Request, res:Response , next:NextFunction)=>{
-   console.log(req.body)
    const userServices = new UserServices()
    
    // Validate request body against schema
@@ -67,6 +66,9 @@ export const login = async(req:Request, res:Response , next:NextFunction)=>{
    const refreshToken = await userServices.refreshToken(isUserExists[0]?._id as string);
    
    // Set tokens in cookies
+   res.clearCookie("accessToken")
+   res.clearCookie("refreshToken")
+
    res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -91,8 +93,10 @@ export const login = async(req:Request, res:Response , next:NextFunction)=>{
 export const profile = async(req:Request & {user?: any}, res:Response, next:NextFunction)=>{
    const userServices = new UserServices();
    const profile = await userServices.getUser(req.user._id);
-   return ApiResponse.success([profile], "profile fetched successfully", 200).send(res);
-   
+   if(profile !== null){
+      return ApiResponse.success([profile], "profile fetched successfully", 200).send(res);
+   }
+   return ApiResponse.failure([], "profile not found", 404).send(res);
    
 }
 

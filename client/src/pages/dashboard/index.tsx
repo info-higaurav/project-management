@@ -7,6 +7,7 @@ import axios from "axios";
 import { Loader } from "../../helper/loader";
 import Expire from "@/helper/expire";
 import Profile from "../profile";
+import Users from "../users";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -48,7 +49,7 @@ export default function Dashboard() {
   if(error){
     return <Expire message={error}/>
   }
-
+console.log(data.userRole)
   const handleLogout = async() => {
     try {
       const endpoint = import.meta.env.VITE_API_URL;
@@ -100,9 +101,8 @@ export default function Dashboard() {
     { name: "Analytics", icon: "📈" },
     { name: "Settings", icon: "⚙️" }
   ];
-  const notAllowedToUser = ["Team", "Reports", "Users", "Documents", "Analytics", "Settings","Projects"]
 
-  console.log(drawerTabs.filter(tab => data.userRole !== "user" ? tab : []))
+
   const renderContent = () => {
     if (activeTab === "Home") {
       return (
@@ -140,6 +140,8 @@ export default function Dashboard() {
       );
     } else if (activeTab === "Profile") {
       return <Profile data={data} />;
+    }else if(activeTab === "Users" && data.userRole === "admin"){
+      return <Users/>
     }
     return null;
   };
@@ -198,7 +200,7 @@ export default function Dashboard() {
 
         <nav className="flex-1 overflow-y-auto custom-scrollbar">
           <ul className="p-6 space-y-3">
-            {drawerTabs.filter(tabs=> !notAllowedToUser.includes(tabs.name)).map((tab) => (
+            {drawerTabs.map((tab) => (
               <li key={tab.name}>
                 <button 
                   onClick={() => {
