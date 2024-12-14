@@ -7,6 +7,7 @@ const app =  express();
 // cofig server
 app.use(cors({
     origin: true,
+    methods:["GET","POST"],
     credentials: true
 }));
 app.use(express.json())

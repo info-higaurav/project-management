@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm} from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,6 +26,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import {useState } from "react"
+import axios from "axios"
+import { Loader } from "@/helper/loader"
+import Expire from "@/helper/expire"
 
 const formSchema = z.object({
     projectName: z.string().min(2, {
@@ -40,6 +44,42 @@ const formSchema = z.object({
 })
 
 export default function CreateProject() {
+    const [managers, setManagers] = useState([])
+    const [mloading, setMloading]=useState(false)
+    const [merr , setMerr]=useState('')
+
+    const [ploading, setPloading]=useState(false)
+    const [perror, setPerror]=useState('')
+    const [pmsg, setPmsg]=useState('')
+    //@ts-ignore
+    const [error, setError] = useState('')
+    //@ts-ignore
+    const [loading, setLoading] = useState(false)
+    const [open, setOpen] = useState(false)
+
+    console.log(merr, perror)
+    
+   async function handleManagersList(){
+          try {
+            setMloading(true)
+            const accessToken = localStorage.getItem("accessToken") || "";
+            const endpoint = import.meta.env.VITE_API_URL;
+            const response = await axios.get(`${endpoint}/api/v1/admin/get-managers`, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`
+              },
+              withCredentials: true
+            })
+            setManagers(response.data.data)
+          } catch (error:any) {
+            setMerr(error.response.data.message)
+          }finally{
+            setMloading(false)
+          }
+        
+    }
+   
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -51,9 +91,43 @@ export default function CreateProject() {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+       
+        try {
+            setPloading(true)
+            const endpoint = import.meta.env.VITE_API_URL;
+            const response = await axios.post(
+                `${endpoint}/api/v1/admin/create-project`,
+                values,
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true
+                }
+            );
+            
+            if (response.status === 201) {
+                form.reset();
+                console.log(response.data.message)  
+                setPmsg(response.data.message)
+                
+                return;
+            }
+
+        } catch (error: any) {
+            console.error(error); // Using console.error for errors
+            setPerror(error.response?.data.message);
+        } finally {
+           setPloading(false)
+           setTimeout(()=>{
+            setPmsg('')
+            setPerror('')
+            setOpen(false)
+           },2000)
+        }
     }
+
+
 
     const formatDate = (date: string) => {
         if (!date) return "";
@@ -65,10 +139,16 @@ export default function CreateProject() {
         });
     };
 
+    if (loading) {
+        return <Loader />
+    }
+    if (error) {
+        return <Expire message={error} />
+    }
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-full">
+                <Button onClick={handleManagersList} variant="outline" className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-full">
                     + New Project
                 </Button>
             </DialogTrigger>
@@ -76,7 +156,7 @@ export default function CreateProject() {
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-white">Create New Project</DialogTitle>
                 </DialogHeader>
-                
+
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
                         <FormField
@@ -101,9 +181,9 @@ export default function CreateProject() {
                                     <FormItem>
                                         <FormLabel className="text-white">Start Date</FormLabel>
                                         <FormControl>
-                                            <Input 
-                                                type="date" 
-                                                className="bg-white/10 text-white border-white/20 rounded-xl" 
+                                            <Input
+                                                type="date"
+                                                className="bg-white/10 text-white border-white/20 rounded-xl"
                                                 {...field}
                                                 onChange={(e) => {
                                                     field.onChange(e);
@@ -127,9 +207,9 @@ export default function CreateProject() {
                                     <FormItem>
                                         <FormLabel className="text-white">End Date</FormLabel>
                                         <FormControl>
-                                            <Input 
-                                                type="date" 
-                                                className="bg-white/10 text-white border-white/20 rounded-xl" 
+                                            <Input
+                                                type="date"
+                                                className="bg-white/10 text-white border-white/20 rounded-xl"
                                                 {...field}
                                                 onChange={(e) => {
                                                     field.onChange(e);
@@ -154,10 +234,10 @@ export default function CreateProject() {
                                 <FormItem>
                                     <FormLabel className="text-white">Project Description</FormLabel>
                                     <FormControl>
-                                        <Textarea 
-                                            placeholder="Enter project description" 
+                                        <Textarea
+                                            placeholder="Enter project description"
                                             className="h-24 resize-none bg-white/10 text-white placeholder:text-gray-400 border-white/20 rounded-xl"
-                                            {...field} 
+                                            {...field}
                                         />
                                     </FormControl>
                                     <FormMessage className="text-red-300" />
@@ -174,12 +254,19 @@ export default function CreateProject() {
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
                                             <SelectTrigger className="bg-white/10 text-white border-white/20 rounded-xl">
-                                                <SelectValue placeholder="Select Project Manager" />
+                                                <SelectValue placeholder={mloading ? 'Loading...' : 'Select Project Manager'} />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="bg-indigo-900 border-white/20 rounded-xl">
-                                            <SelectItem value="1">John Doe</SelectItem>
-                                            <SelectItem value="2">Jane Smith</SelectItem>
+                                            {
+                                                managers?.map((manager)=>{
+                                                    return(
+                                                        <>
+                                                            <SelectItem value={(manager as any)._id}>{(manager as {firstName: string; lastName: string})?.firstName} {(manager as {firstName: string; lastName: string})?.lastName}</SelectItem>
+                                                        </>
+                                                    )
+                                                })
+                                            }
                                         </SelectContent>
                                     </Select>
                                     <FormMessage className="text-red-300" />
@@ -196,7 +283,14 @@ export default function CreateProject() {
                             <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full">
                                 Create Project
                             </Button>
+                           
                         </div>
+                        {ploading && (
+                                <div className=" mt-2 text-center text-white">Creating project, please wait...</div>
+                            )}
+                            {pmsg && !ploading && (
+                                <div className="text-center text-white  mt-2">{pmsg}</div>
+                            )}
                     </form>
                 </Form>
             </DialogContent>

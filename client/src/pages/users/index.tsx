@@ -62,8 +62,12 @@ export default function Users() {
                                             alt={`${user.firstName} ${user.lastName}`}
                                             className="w-full h-full object-cover"
                                             onError={(e) => {
-                                                e.currentTarget.style.display = 'none';
-                                                e.currentTarget.nextSibling.style.display = 'block';
+                                                const target = e.currentTarget;
+                                                const nextElement = target.parentElement?.querySelector('span');
+                                                if (nextElement instanceof HTMLElement) {
+                                                    target.style.display = 'none';
+                                                    nextElement.style.display = 'block';
+                                                }
                                             }}
                                         />
                                     ) : (

@@ -10,6 +10,9 @@ import Profile from "../profile";
 import Users from "../users";
 import { AccessDenied } from "../access-denied";
 import Project from "../project";
+import Task from "../task";
+import ManageTask from "../manage-task";
+import Cards from "../cards";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -51,7 +54,7 @@ export default function Dashboard() {
   if(error){
     return <Expire message={error}/>
   }
-console.log(data.userRole)
+
   const handleLogout = async() => {
     try {
       const endpoint = import.meta.env.VITE_API_URL;
@@ -59,7 +62,7 @@ console.log(data.userRole)
         withCredentials: true
       })
       if(response.status === 200){
-        console.log(response.data)
+       
         setTimeout(()=>{
           navigate("/login")
         },5000)
@@ -103,42 +106,15 @@ console.log(data.userRole)
     { name: "Analytics", icon: "📈" },
     { name: "Settings", icon: "⚙️" }
   ];
-console.log(data)
+
+  const admin =["Profile","Projects"]
+  const manager =["Profile","Projects","Tasks"]
+
 
   const renderContent = () => {
     if (activeTab === "Home") {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {/* Project Stats Card */}
-          <div className="bg-black/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Active Projects</h3>
-              <span className="text-3xl">📊</span>
-            </div>
-            <p className="text-3xl font-bold text-white">12</p>
-            <p className="text-sm text-white/70">4 projects due this week</p>
-          </div>
-
-          {/* Team Performance Card */}
-          <div className="bg-black/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font -semibold text-white">Team Performance</h3>
-              <span className="text-3xl">📈</span>
-            </div>
-            <p className="text-3xl font-bold text-white">87%</p>
-            <p className="text-sm text-white/70">Tasks completed on time</p>
-          </div>
-
-          {/* Upcoming Deadlines Card */}
-          <div className="bg-black/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Upcoming Deadlines</h3>
-              <span className="text-3xl">⏰</span>
-            </div>
-            <p className="text-3xl font-bold text-white">5</p>
-            <p className="text-sm text-white/70">Deadlines within 7 days</p>
-          </div>
-        </div>
+      <Cards/>
       );
     } else if (activeTab === "Profile") {
       return <Profile data={data} />;
@@ -147,6 +123,8 @@ console.log(data)
     }else if (activeTab === "Projects"){
       const roles = ["admin","manager"]
       return roles.includes(data.userRole) ? <Project userRole={data.userRole}/> : <AccessDenied/>
+    }else if(activeTab === "Tasks"){
+      return data.userRole === "user" ? <Task/> : data.userRole === "manager" ? <ManageTask userRole={data.userRole}/> : <AccessDenied/>
     }
     return null;
   };
@@ -205,7 +183,7 @@ console.log(data)
 
         <nav className="flex-1 overflow-y-auto custom-scrollbar">
           <ul className="p-6 space-y-3">
-            {drawerTabs.map((tab) => (
+            {/* {drawerTabs.map((tab) => (
               <li key={tab.name}>
                 <button 
                   onClick={() => {
@@ -222,7 +200,59 @@ console.log(data)
                   <span className="font-medium">{tab.name}</span>
                 </button>
               </li>
-            ))}
+            ))} */}
+            {
+              data.userRole === "admin" && (
+                drawerTabs.filter((tab) => admin.includes(tab.name))
+                .map((tab) => {
+                  return (
+                    <li key={tab.name}>
+                      <button 
+                        onClick={() => {
+                          setActiveTab(tab.name);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 ${
+                          activeTab === tab.name 
+                            ? "bg-white/20 text-white" 
+                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        <span className="mr-3 text-xl">{tab.icon}</span>
+                        <span className="font-medium">{tab.name}</span>
+                      </button>
+                    </li>
+                  )
+                })
+              )
+            }
+
+
+{
+              data.userRole === "manager" && (
+                drawerTabs.filter((tab) => manager.includes(tab.name))
+                .map((tab) => {
+                  return (
+                    <li key={tab.name}>
+                      <button 
+                        onClick={() => {
+                          setActiveTab(tab.name);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 ${
+                          activeTab === tab.name 
+                            ? "bg-white/20 text-white" 
+                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        <span className="mr-3 text-xl">{tab.icon}</span>
+                        <span className="font-medium">{tab.name}</span>
+                      </button>
+                    </li>
+                  )
+                })
+              )
+            }
           </ul>
         </nav>
 

@@ -2,6 +2,7 @@ import { Response , Request, NextFunction} from "express"
 import ApiResponse from "../utils/ApiResponse"
 import { UserServices } from "../services/user/user.services"
 import { loginValidation } from "../services/user/user.validation"
+import TaskServices from "../services/task/task.services"
 
 export const healthCheckup = async( _:Response , res:Response)=>{
    return ApiResponse.success([],"User routes are OK !", 200).send(res)
@@ -71,13 +72,17 @@ export const login = async(req:Request, res:Response , next:NextFunction)=>{
 
    res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
+      secure: true, 
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day from now
+      sameSite: "strict",
+      domain: process.env.NODE_ENV === "production" ? process.env.PRODUCTION_HOST : process.env.LOCALHOST
    })
    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 10 * 24 * 60 * 60 * 1000 // 10 days
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
+      sameSite: "strict", 
+      domain: process.env.NODE_ENV === "production" ? process.env.PRODUCTION_HOST : process.env.LOCALHOST
    })
 
    // Set tokens in headers
@@ -104,4 +109,23 @@ export const logout = async(req:Request, res:Response, next:NextFunction)=>{
    res.clearCookie("accessToken")
    res.clearCookie("refreshToken")
    return ApiResponse.success([], "logout successfully", 200).send(res)
+}
+
+export const getMyTask = async(req:Request, res:Response, next:NextFunction)=>{
+   const userId = (req as any).user._id;
+   const userSerivce = new UserServices();
+   const taskService = new TaskServices();
+
+   const isUserExists = await userSerivce.getUser(userId);
+   
+   if(isUserExists === null || isUserExists === undefined ){
+      return ApiResponse.failure([], "user not found", 404).send(res);
+   }
+   const tasks = await taskService.getMyTask(userId)
+
+   if(tasks.length == 0){
+      return ApiResponse.failure([], "no tasks found", 404).send(res);
+   }
+     
+   return ApiResponse.success(tasks, "tasks fetched successfully", 200).send(res);
 }

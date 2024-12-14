@@ -8,7 +8,7 @@ export default function handleApiError(
     res: Response,
     next: NextFunction
 ) {
-
+    console.log(err)
     if (err instanceof ZodError) {
         const errorMessages = err.errors.map(error => ({
             field: error.path.join('.'),
@@ -21,5 +21,5 @@ export default function handleApiError(
         ).send(res);
     }
 
-    console.log(err)
+   
 }

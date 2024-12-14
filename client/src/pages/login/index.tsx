@@ -43,7 +43,7 @@ export default function Login() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            const endpoint = import.meta.env.VITE_API_URL;
+            const endpoint = import.meta.env.VITE_API_URL;            
                 
             const res = await axios.post(
                 `${endpoint}/api/v1/users/login`,

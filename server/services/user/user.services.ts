@@ -4,6 +4,7 @@ import { SignupInput } from "./user.validation";
 import { signupSchema } from "./user.validation";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcryptjs'
+import Task from "../../model/task.model";
 class UserServices {
   
     async validateSignup (data:SignupInput){
@@ -25,6 +26,12 @@ class UserServices {
         const response = await User.find({}).select('-password -accessToken -refreshToken');
         return response;
     }
+
+    async getManagers(){
+        const response = await User.find({userRole:'manager'}).select('-password -accessToken -refreshToken');
+        return response;
+    }
+    
    async createUser (data:SignupInput){
         const {password, ...userDate} = data;
         const encryptedPassword = await bcrypt.hash(password, 10);

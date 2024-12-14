@@ -1,7 +1,7 @@
 
 
 export default function Profile(data:any){
-    const {firstName,lastName,emailAddress,userRole,status , ...rest} = data.data;
+    const {firstName,lastName,emailAddress,userRole,status} = data.data;
     
     return <div className="space-y-6">
     <div className="bg-black/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
