@@ -19,6 +19,7 @@ export const projectValidation = z.object({
     .min(10, {message:"Project description must be at least 10 characters."})
     .min(1, {message: "Project description is required"}),
     projectManagerId:z.string()
+    .regex(/^[0-9a-fA-F]{24}$/, {message: "Invalid project manager ID"})
     .min(1, {message: "Project manager is required"})
 })
 

@@ -8,14 +8,15 @@ export default function handleApiError(
     res: Response,
     next: NextFunction
 ) {
+
     if (err instanceof ZodError) {
         const errorMessages = err.errors.map(error => ({
             field: error.path.join('.'),
             message: error.message
         }));
         return ApiResponse.failure(
-            errorMessages,
-            "Validation failed",
+            [errorMessages],
+            errorMessages[0].message,
             400
         ).send(res);
     }
