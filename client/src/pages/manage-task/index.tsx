@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Loader } from "@/helper/loader";
-import Expire from "@/helper/expire";
+
 import CreateTask from "../create-task";
 
 export default function ManageTask({userRole}:{userRole:string}) {
@@ -13,16 +13,16 @@ export default function ManageTask({userRole}:{userRole:string}) {
         (async () => {
             try {
                 setLoading(true)
-                const accessToken = localStorage.getItem("accessToken") || "";
                 const endpoint = import.meta.env.VITE_API_URL;
-                const response = await axios.get(`${endpoint}/api/v1/admin/get-tasks`, {
+                const response = await axios.get(`${endpoint}/api/v1/managment/tasks`, {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`
+                      "Content-Type":"application/json" 
                     },
                     withCredentials: true
                 })
                 setData(response.data.data)
             } catch (error: any) {
+                console.log(error)
                 setError(error.response.data.message)
             } finally {
                 setLoading(false)
@@ -34,9 +34,11 @@ export default function ManageTask({userRole}:{userRole:string}) {
         return <Loader />
     }
     if (error) {
-        return <Expire message={error} />
+        return <div className="flex w-full justify-center items-center">
+            <h1 className="text-white font-bold text-xl">There is no task </h1>
+        </div>
     }
-
+console.log(error)
     return (
         <div className="min-h-screen bg-gradient-to-br bg-black/10 backdrop-blur-xl p-6 rounded-2xl border-white/10">
             <div className="max-w-7xl mx-auto">

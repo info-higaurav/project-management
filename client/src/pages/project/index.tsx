@@ -48,7 +48,7 @@ export default function Project({userRole}:{userRole:string}) {
             setLoading(true)
             const accessToken = localStorage.getItem("accessToken") || "";
             const endpoint = import.meta.env.VITE_API_URL;
-            const response = await axios.get(`${endpoint}/api/v1/admin/get-projects`, {
+            const response = await axios.get(`${endpoint}/api/v1/managment/projects`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`
               },

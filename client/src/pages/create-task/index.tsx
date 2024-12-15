@@ -41,16 +41,16 @@ export default function CreateTask() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const accessToken = localStorage.getItem("accessToken") || "";
+               
                 const endpoint = import.meta.env.VITE_API_URL;
                 
                 const [projectsResponse, usersResponse] = await Promise.all([
                     axios.get(`${endpoint}/api/v1/admin/get-projects`, {
-                        headers: { Authorization: `Bearer ${accessToken}` },
+                        headers: {"Content-Type":"application/json"},
                         withCredentials: true
                     }),
                     axios.get(`${endpoint}/api/v1/admin/get-users`, {
-                        headers: { Authorization: `Bearer ${accessToken}` },
+                        headers: {"Content-Type":"application/json"},
                         withCredentials: true
                     })
                 ]);
@@ -83,37 +83,34 @@ export default function CreateTask() {
     const handleCreateTask = async () => {
         try {
             setLoading(true)
-            const accessToken = localStorage.getItem("accessToken") || "";
+            
             const endpoint = import.meta.env.VITE_API_URL;
 
             const [projectResponse, userResponse] = await Promise.all([
                 axios.get(`${endpoint}/api/v1/admin/get-projects`, {
-                    headers: { Authorization: `Bearer ${accessToken}` },
+                    headers: {"Content-Type":"application/json"},
                     withCredentials: true
                 }),
                 axios.get(`${endpoint}/api/v1/admin/getusers`, {
-                    headers: { Authorization: `Bearer ${accessToken}` },
+                    headers: {"Content-Type":"application/json"},
                     withCredentials: true
                 })
             ])
-            console.log(userResponse, projectResponse)
             setProjects(projectResponse.data.data);
             setUsers(userResponse.data.data);
             
         } catch (error: any) {
-            // setError(error.response.data.message)
             setError(error.response.data.message);
         } finally {
             setLoading(false)
             setError('')
-
         }
     }
 
     const onSubmit = async (data: any) => {
         try {
             setLoading(true)
-            const accessToken = localStorage.getItem("accessToken") || "";
+            
             const endpoint = import.meta.env.VITE_API_URL;
             
             const formattedData = {
@@ -122,9 +119,7 @@ export default function CreateTask() {
             };
 
           const res =  await axios.post(`${endpoint}/api/v1/admin/create-task`, formattedData, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                },
+                 headers: {"Content-Type":"application/json"},
                 withCredentials: true
             })
             setMsg(res.data.message)
@@ -136,6 +131,7 @@ export default function CreateTask() {
             setError('')
             setTimeout(()=>{
                 setOpen(false);
+                setMsg('');
             },3000)
         }
     }
@@ -358,13 +354,17 @@ export default function CreateTask() {
                         {error && <p className="text-red-400 text-sm bg-red-500/10 p-3 rounded-lg">{error}</p>}
 
                         <DialogFooter>
-                            <Button 
+                          <div className="w-full flex flex-col items-center gap-3">
+                          <Button 
                                 type="submit" 
                                 disabled={loading}
                                 className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
                             >
                                 {loading ? "Creating..." : "Create Task"}
+                                
                             </Button>
+                            {msg && (<h1>Task created successfully</h1>)}
+                          </div>
                         </DialogFooter>
                     </form>
                 </Form>

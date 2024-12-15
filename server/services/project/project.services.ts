@@ -17,6 +17,11 @@ class ProjectServices{
         return projects;
     }
 
+    async isProjectValid (projectId:string){
+        const response = await Project.findById(projectId)
+        return response;
+    }
+
     async myProject (userId:string){
         const project = await Project.find({projectManagerId:userId},"-__v").populate("projectManagerId","-password -__v -refreshToken -accessToken ");
         return project;

@@ -64,12 +64,13 @@ export default function CreateProject() {
             setMloading(true)
             const accessToken = localStorage.getItem("accessToken") || "";
             const endpoint = import.meta.env.VITE_API_URL;
-            const response = await axios.get(`${endpoint}/api/v1/admin/get-managers`, {
+            const response = await axios.get(`${endpoint}/api/v1/admin/managers`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`
               },
               withCredentials: true
             })
+            console.log(response.data.data)
             setManagers(response.data.data)
           } catch (error:any) {
             setMerr(error.response.data.message)
@@ -77,8 +78,7 @@ export default function CreateProject() {
             setMloading(false)
           }
         
-    }
-   
+}
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -91,14 +91,13 @@ export default function CreateProject() {
         },
     })
 
-
     async function onSubmit(values: z.infer<typeof formSchema>) {
        
         try {
             setPloading(true)
             const endpoint = import.meta.env.VITE_API_URL;
             const response = await axios.post(
-                `${endpoint}/api/v1/admin/create-project`,
+                `${endpoint}/api/v1/admin/projects`,
                 values,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -258,7 +257,7 @@ export default function CreateProject() {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="bg-indigo-900 border-white/20 rounded-xl">
-                                            {
+                                        {
                                                 managers?.map((manager)=>{
                                                     return(
                                                         <>
@@ -283,7 +282,7 @@ export default function CreateProject() {
                             <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full">
                                 Create Project
                             </Button>
-                           
+                        
                         </div>
                         {ploading && (
                                 <div className=" mt-2 text-center text-white">Creating project, please wait...</div>

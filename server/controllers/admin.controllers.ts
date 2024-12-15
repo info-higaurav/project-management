@@ -76,12 +76,13 @@ export const getProjects = async(req:Request, res:Response, next:NextFunction)=>
 
 export const createTask = async(req:Request, res:Response, next:NextFunction)=>{
     const userId = (req as any).user._id;
-    const {taskAssignorId ,taskAssigneeId, associatedProjectId}=req.body;
+    const {taskAssigneeId, associatedProjectId}=req.body;
     const payload ={...req.body,taskAssignorId:userId}
     const valTask = validateTask.parse(payload);
 
     const userServices = new UserServices();
     const taskServices = new TaskServices();
+    const projectServices = new ProjectServices();
     const whoMadeRequest = await userServices.getUser(userId);
     const isUserExists = await userServices.getUser(taskAssigneeId);
 
@@ -92,7 +93,7 @@ export const createTask = async(req:Request, res:Response, next:NextFunction)=>{
     if(isUserExists?.userRole !== "user"){
         return ApiResponse.failure([], "User not found", 404).send(res);
     }
-    const isProjectExists = await taskServices.isProjectValid(associatedProjectId)
+    const isProjectExists = await projectServices.isProjectValid(associatedProjectId)
 
     if(!isProjectExists){
         return ApiResponse.failure([], "Project not found", 404).send(res);
@@ -111,7 +112,7 @@ export const getManagers = async(req:Request, res:Response, next:NextFunction)=>
         return ApiResponse.failure([], "Unauthorized", 401).send(res);
     }
     const managerList = await userServices.getManagers();
-    
+    console.log(managerList)
     if(managerList.length === 0){
         return ApiResponse.failure([],"No  found",401).send(res)
     }

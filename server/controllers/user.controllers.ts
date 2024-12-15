@@ -1,7 +1,6 @@
 import { Response , Request, NextFunction} from "express"
 import ApiResponse from "../utils/ApiResponse"
 import { UserServices } from "../services/user/user.services"
-import { loginValidation } from "../services/user/user.validation"
 import TaskServices from "../services/task/task.services"
 
 export const healthCheckup = async( _:Response , res:Response)=>{
@@ -31,18 +30,24 @@ export const signup = async(req:Request, res:Response , next:NextFunction)=>{
    const accessToken = await userServices.accessToken(user?._id as string)
    const refreshToken = await userServices.refreshToken(user?._id as string)
 
-   // Set tokens in cookies
-   res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
-   })
-   res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 10 * 24 * 60 * 60 * 1000 // 10 days
-   })
+    // Set tokens in cookies
+    res.clearCookie("accessToken")
+    res.clearCookie("refreshToken")
 
+    res.cookie("accessToken", accessToken, {
+       httpOnly: true,
+       secure: true, 
+       expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day from now
+       sameSite: "none",
+       domain: process.env.NODE_ENV === "production" ? process.env.PRODUCTION_HOST : process.env.LOCALHOST
+    })
+    res.cookie("refreshToken", refreshToken, {
+       httpOnly: true,
+       secure: true,
+       expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
+       sameSite: "none", 
+       domain: process.env.NODE_ENV === "production" ? process.env.PRODUCTION_HOST : process.env.LOCALHOST
+    })
    // Set tokens in headers
    res.set({
       "Authorization": `Bearer ${accessToken}`,
@@ -69,20 +74,21 @@ export const login = async(req:Request, res:Response , next:NextFunction)=>{
    // Set tokens in cookies
    res.clearCookie("accessToken")
    res.clearCookie("refreshToken")
+   
 
    res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: true, 
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day from now
-      sameSite: "strict",
-      domain: process.env.NODE_ENV === "production" ? process.env.PRODUCTION_HOST : process.env.LOCALHOST
+      sameSite: "none",
+      // domain: process.env.NODE_ENV === "production" ? process.env.PRODUCTION_HOST : process.env.LOCALHOST,
    })
    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
       expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
-      sameSite: "strict", 
-      domain: process.env.NODE_ENV === "production" ? process.env.PRODUCTION_HOST : process.env.LOCALHOST
+      sameSite: "none", 
+      // domain: process.env.NODE_ENV === "production" ? process.env.PRODUCTION_HOST : process.env.LOCALHOST
    })
 
    // Set tokens in headers
@@ -123,9 +129,8 @@ export const getMyTask = async(req:Request, res:Response, next:NextFunction)=>{
    }
    const tasks = await taskService.getMyTask(userId)
 
-   if(tasks.length == 0){
-      return ApiResponse.failure([], "no tasks found", 404).send(res);
-   }
-     
-   return ApiResponse.success(tasks, "tasks fetched successfully", 200).send(res);
+   if(tasks?.length == 0){
+      return ApiResponse.success([], "no tasks found", 200).send(res);
+   } 
+   return ApiResponse.success(tasks || [], "tasks fetched successfully", 200).send(res);
 }

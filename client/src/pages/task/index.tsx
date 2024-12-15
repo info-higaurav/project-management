@@ -12,17 +12,18 @@ export default function Task() {
         (async () => {
             try {
                 setLoading(true)
-                const accessToken = localStorage.getItem("accessToken") || "";
+
                 const endpoint = import.meta.env.VITE_API_URL;
-                const response = await axios.get(`${endpoint}/api/v1/admin/get-tasks`, {
+                const response = await axios.get(`${endpoint}/api/v1/managment/tasks`, {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`
+                       "Content-Type":"application/json"
                     },
                     withCredentials: true
                 })
                 setData(response.data.data)
             } catch (error: any) {
-                setError(error.response.data.message)
+               
+                setError(error.response?.data.message)
             } finally {
                 setLoading(false)
             }
@@ -89,6 +90,9 @@ export default function Task() {
                                     src={task.taskAssignorId.profilePicture} 
                                     alt="Assignor"
                                     className="w-8 h-8 rounded-full"
+                                    onError={(e) => {
+                                        e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/10337/10337609.png";
+                                      }}
                                 />
                                 <div>
                                     <p className="text-sm text-white/50">Assigned by</p>

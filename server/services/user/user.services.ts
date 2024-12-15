@@ -1,10 +1,9 @@
 import User from "../../model/user.mode"
-import { Request, Response, NextFunction} from "express";
 import { SignupInput } from "./user.validation";
 import { signupSchema } from "./user.validation";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcryptjs'
-import Task from "../../model/task.model";
+
 class UserServices {
   
     async validateSignup (data:SignupInput){
@@ -15,6 +14,14 @@ class UserServices {
     async validateLogin (data:SignupInput){
         const result = await signupSchema.parseAsync(data)
         return result
+    }
+
+    async createUser (data:SignupInput){
+        const {password, ...userDate} = data;
+        const encryptedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({...userDate, password:encryptedPassword});
+        const userWithoutPassword = await User.findById(user._id).select('-password');
+        return userWithoutPassword;
     }
 
     async getUser(id:string){
@@ -31,19 +38,11 @@ class UserServices {
         const response = await User.find({userRole:'manager'}).select('-password -accessToken -refreshToken');
         return response;
     }
-    
-   async createUser (data:SignupInput){
-        const {password, ...userDate} = data;
-        const encryptedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({...userDate, password:encryptedPassword});
-        const userWithoutPassword = await User.findById(user._id).select('-password');
-        return userWithoutPassword;
-    }
 
-async verifyPassword (password:String, hashedPassword:String){
-    const response = await bcrypt.compare(password as string , hashedPassword as string);
-    return response;
-}
+    async verifyPassword (password:String, hashedPassword:String){
+        const response = await bcrypt.compare(password as string , hashedPassword as string);
+        return response;
+    }
 
     async isUserExists (emailAddress:string){
         const res = await User.find({emailAddress:emailAddress});
@@ -80,9 +79,7 @@ async verifyPassword (password:String, hashedPassword:String){
         );
 
         return refreshToken;
-    }
-
-    
+    } 
 }
 
 export {UserServices};

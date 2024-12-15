@@ -29,7 +29,7 @@ export default function Dashboard() {
       try {
         setLoading(true)
         const endpoint = import.meta.env.VITE_API_URL;
-        const response = await axios.get(`${endpoint}/api/v1/users/profile`, {
+        const response = await axios.get(`${endpoint}/api/v1/managment/profile`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -39,7 +39,7 @@ export default function Dashboard() {
         setData(response.data.data)
 
       } catch (error: any) {
-        setError(error.response.data.message)
+        setError(error.response?.data.message)
         setTimeout(() => {
           navigate("/login")
         }, 5000)
@@ -109,6 +109,7 @@ export default function Dashboard() {
 
   const admin =["Home","Profile","Projects","Users"]
   const manager =["Profile","Projects","Tasks"]
+  const user =["Profile","Tasks"]
 
 
   const renderContent = () => {
@@ -124,7 +125,7 @@ export default function Dashboard() {
       const roles = ["admin","manager"]
       return roles.includes(data[0]?.userRole) ? <Project userRole={data[0]?.userRole}/> : <AccessDenied/>
     }else if(activeTab === "Tasks"){
-      return data.userRole === "user" ? <Task/> : data.userRole === "manager" ? <ManageTask userRole={data.userRole}/> : <AccessDenied/>
+      return data[0].userRole === "user" ? <Task/> : data[0].userRole === "manager" ? <ManageTask userRole={data[0]?.userRole}/> : <AccessDenied/>
     }
     return null;
   };
@@ -229,7 +230,7 @@ export default function Dashboard() {
 
 
 {
-              data.userRole === "manager" && (
+              data[0]?.userRole === "manager" && (
                 drawerTabs.filter((tab) => manager.includes(tab.name))
                 .map((tab) => {
                   return (
@@ -253,6 +254,35 @@ export default function Dashboard() {
                 })
               )
             }
+
+
+
+{
+              data[0]?.userRole === "user" && (
+                drawerTabs.filter((tab) => user.includes(tab.name))
+                .map((tab) => {
+                  return (
+                    <li key={tab.name}>
+                      <button 
+                        onClick={() => {
+                          setActiveTab(tab.name);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 ${
+                          activeTab === tab.name 
+                            ? "bg-white/20 text-white" 
+                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        <span className="mr-3 text-xl">{tab.icon}</span>
+                        <span className="font-medium">{tab.name}</span>
+                      </button>
+                    </li>
+                  )
+                })
+              )
+            }
+
           </ul>
         </nav>
 
