@@ -44,14 +44,16 @@ export default function Home() {
                                 Streamline your projects with real-time tracking, team collaboration, and intelligent insights.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
+                            <NavLink to="/login">
                                 <button className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:scale-105 transition-all group">
                                     <span className="flex items-center gap-2">
-                                        <NavLink to="/login">Get Started</NavLink>
+                                        Get Started
                                         <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                         </svg>
                                     </span>
                                 </button>
+                                </NavLink>
                                 <button className="px-8 py-4 bg-white/10 text-white rounded-lg font-semibold hover:bg-white/20 transition-all backdrop-blur-sm group">
                                     <span className="flex items-center gap-2">
                                         <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">

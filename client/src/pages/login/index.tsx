@@ -1,6 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import axios from 'axios'
+import { useState } from "react"
 import * as z from "zod"
+import { NavLink, useNavigate } from "react-router-dom"
+
 import { Button } from "../../components/ui/button"
 import {
   Form,
@@ -13,38 +17,30 @@ import {
 import { Input } from "../../components/ui/input"
 import { Checkbox } from "../../components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card"
-import axios from 'axios'
-import { useState } from "react"
-import { NavLink, useNavigate } from "react-router-dom"
 
-// Strong password validation schema
-const formSchema = z.object({
-  emailAddress: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one symbol"),
-  rememberMe: z.boolean().default(false)
-})
+import loginValidationSchema from "@/helper/validation/login validation"
+
 
 export default function Login() {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const [loading , setLoading]=useState(false)
+    const [error, setError] = useState('')
+    const navigate = useNavigate()
+    // handling form data
+    const form = useForm<z.infer<typeof loginValidationSchema>>({
+        resolver: zodResolver(loginValidationSchema),
         defaultValues: {
             emailAddress: "",
             password: "",
             rememberMe: false,
         },
     })
-    const [err, setErr] = useState('')
-    const navigate = useNavigate()
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof loginValidationSchema>) {
         try {
-            const endpoint = import.meta.env.VITE_API_URL;            
-                
+            setLoading(true)
+            setError('')
+        
+            const endpoint = import.meta.env.VITE_API_URL;
             const res = await axios.post(
                 `${endpoint}/api/v1/users/login`,
                 values,
@@ -53,19 +49,18 @@ export default function Login() {
                     withCredentials: true
                 }
             )
-            if(res.status === 200){ // Use strict equality
+
+            if (res.status === 200) { // Use strict equality
                 form.reset();
                 navigate("/dashboard")
             }
         } catch (error: any) {
             console.error(error) // Use console.error for errors
-            setErr(error.response?.data.message)
+            setError(error.response?.data.message)
         }
         finally {
-            // Clear error message after 2 seconds
-            setTimeout(() => {
-                setErr('')
-            }, 2000)
+            setLoading(false)
+            
         }
     }
 
@@ -179,11 +174,12 @@ export default function Login() {
 
                                 <Button 
                                     type="submit" 
+                                    disabled={loading}
                                     className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg py-2.5"
                                 >
-                                    Sign In
+                                   {loading ? 'Loading...' : ' Sign In'}
                                 </Button>
-                                {err && <p className="text-center text-red-600">{err}</p>}
+                                {error && <p className="text-center text-red-600">{error}</p>}
                             </form>
                         </Form>
 

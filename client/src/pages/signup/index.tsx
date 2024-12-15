@@ -58,7 +58,6 @@ export default function Signup() {
       }
       
     } catch (error: any) {
-      console.error(error); // Using console.error for errors
       setError(error.response?.data.message);
     } finally {
       setIsLoading(false);
@@ -79,7 +78,7 @@ export default function Signup() {
               <path d="M3 9h18" />
               <path d="M9 21V9" />
             </svg>
-            Project Management
+            Project Flow
           </div>
           <div className="space-y-8">
             <h2 className="text-4xl font-bold leading-tight">Manage Projects Efficiently</h2>
@@ -120,7 +119,7 @@ export default function Signup() {
                 Get Started Today
               </h1>
               <p className="text-base text-muted-foreground">
-                Join our project management platform
+                Join our project flow platform
               </p>
             </div>
             <Form {...form}>
@@ -130,11 +129,11 @@ export default function Signup() {
                   name="emailAddress"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base">Work Email</FormLabel>
+                      <FormLabel className="text-base">Email</FormLabel>
                       <FormControl>
                         <Input 
                           className="bg-gray-50/50 placeholder:text-gray-400 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
-                          placeholder="name@company.com" 
+                          placeholder="sample@gmail.com" 
                           {...field} 
                         />
                       </FormControl>
