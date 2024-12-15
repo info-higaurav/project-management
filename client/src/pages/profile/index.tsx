@@ -1,6 +1,7 @@
 
 
 export default function Profile(data:any){
+  
     const {firstName,lastName,emailAddress,userRole,status} = data.data;
     
     return <div className="space-y-6">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { LogOut } from "lucide-react";
+import { LogOut} from "lucide-react";
 import axios from "axios";
 import { Loader } from "../../helper/loader";
 import Expire from "@/helper/expire";
@@ -13,40 +13,41 @@ import Project from "../project";
 import Task from "../task";
 import ManageTask from "../manage-task";
 import Cards from "../cards";
+import ProfileCard from "../profile-card";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const [data , setData] = useState<any>({})
+  const [data , setData] = useState<any>([])
   const [loading , setLoading] = useState(false)
   const [error , setError] = useState("")
 
-  useEffect(()=>{
-    (async()=>{
+  useEffect(() => {
+    (async () => {
       try {
         setLoading(true)
-        const accessToken = localStorage.getItem("accessToken") || "";
         const endpoint = import.meta.env.VITE_API_URL;
         const response = await axios.get(`${endpoint}/api/v1/users/profile`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            "Content-Type": "application/json",
           },
           withCredentials: true
         })
-        setData(response.data.data[0])
-      } catch (error:any) {
+        
+        setData(response.data.data)
+
+      } catch (error: any) {
         setError(error.response.data.message)
-        setTimeout(()=>{
+        setTimeout(() => {
           navigate("/login")
-        },5000)
-      }finally{
+        }, 5000)
+      } finally {
         setLoading(false)
       }
-      
     })()
-  },[])
+  }, [])
 
   if(loading){
     return <Loader/>
@@ -55,17 +56,16 @@ export default function Dashboard() {
     return <Expire message={error}/>
   }
 
+
   const handleLogout = async() => {
     try {
       const endpoint = import.meta.env.VITE_API_URL;
       const response = await axios.get(`${endpoint}/api/v1/users/logout`, {
         withCredentials: true
       })
+      
       if(response.status === 200){
-       
-        setTimeout(()=>{
           navigate("/login")
-        },5000)
       }
       
     } catch (error) {
@@ -107,7 +107,7 @@ export default function Dashboard() {
     { name: "Settings", icon: "⚙️" }
   ];
 
-  const admin =["Profile","Projects"]
+  const admin =["Home","Profile","Projects","Users"]
   const manager =["Profile","Projects","Tasks"]
 
 
@@ -117,12 +117,12 @@ export default function Dashboard() {
       <Cards/>
       );
     } else if (activeTab === "Profile") {
-      return <Profile data={data} />;
+      return <Profile data={data[0]} />;
     }else if(activeTab === "Users"){
-      return data.userRole === "admin" ? <Users/> : <AccessDenied/>
+      return data[0].userRole === "admin" ? <Users/> : <AccessDenied/>
     }else if (activeTab === "Projects"){
       const roles = ["admin","manager"]
-      return roles.includes(data.userRole) ? <Project userRole={data.userRole}/> : <AccessDenied/>
+      return roles.includes(data[0]?.userRole) ? <Project userRole={data[0]?.userRole}/> : <AccessDenied/>
     }else if(activeTab === "Tasks"){
       return data.userRole === "user" ? <Task/> : data.userRole === "manager" ? <ManageTask userRole={data.userRole}/> : <AccessDenied/>
     }
@@ -170,15 +170,15 @@ export default function Dashboard() {
             ✕
           </button>
           
-          <div className="w-28 h-28 rounded-full ring-4 ring-purple-500/30 shadow-lg overflow-hidden">
+          {/* <div className="w-28 h-28 rounded-full ring-4 ring-purple-500/30 shadow-lg overflow-hidden">
             <img 
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
               alt="Profile"
               className="w-full h-full object-cover"
             />
-          </div>
-          <h3 className="mt-4 text-xl font-semibold text-white">{data.firstName} {data.lastName}</h3>
-          <p className="text-sm text-white/70">{data.emailAddress}</p>
+          </div> */}
+          {data.length > 0 && (<ProfileCard data ={data[0]}/>)}
+          
         </div>
 
         <nav className="flex-1 overflow-y-auto custom-scrollbar">
@@ -202,7 +202,7 @@ export default function Dashboard() {
               </li>
             ))} */}
             {
-              data.userRole === "admin" && (
+              data[0]?.userRole === "admin" && (
                 drawerTabs.filter((tab) => admin.includes(tab.name))
                 .map((tab) => {
                   return (

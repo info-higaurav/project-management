@@ -49,7 +49,9 @@ export default function Users() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-8">
             <div className="max-w-7xl mx-auto">
-                <h1 className="text-3xl font-bold text-white mb-8">Team Members</h1>
+            <span className="text-orange-300 animate-pulse">{data?.length}</span>
+                <h1 className="text-3xl font-bold text-white mb-8">Team Members </h1>
+                
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {data?.map((user:any) => (
