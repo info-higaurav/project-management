@@ -4,7 +4,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { LogOut} from "lucide-react";
 import axios from "axios";
-import { Loader } from "../../helper/loader";
+
 import Expire from "@/helper/expire";
 import Profile from "../profile";
 import Users from "../users";
@@ -14,6 +14,9 @@ import Task from "../task";
 import ManageTask from "../manage-task";
 import Cards from "../cards";
 import ProfileCard from "../profile-card";
+import DashboardSkeleton from "@/helper/skeleton/DashboardSkeleton";
+
+import Fade from "@/helper/motion/fade/fade";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -50,7 +53,7 @@ export default function Dashboard() {
   }, [])
 
   if(loading){
-    return <Loader/>
+    return <DashboardSkeleton/>
   }
   if(error){
     return <Expire message={error}/>
@@ -131,7 +134,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 overflow-hidden">
+    <Fade>
+    <div    
+    className="flex h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 overflow-hidden">
       {/* Mobile Menu & Notification Container */}
       <div className="md:hidden fixed top-4 right-4 z-10 flex items-center space-x-2">
         <div className="relative">
@@ -384,5 +389,6 @@ export default function Dashboard() {
         `}
       </style>
     </div>
+    </Fade>
   );
 }

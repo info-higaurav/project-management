@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Fade from "@/helper/motion/fade/fade";
 // Schema for signup form validation
 const signupSchema = z.object({
   emailAddress: z.string().email({ message: "Invalid email address" }),
@@ -68,6 +68,7 @@ export default function Signup() {
   }
 
   return (
+    <Fade>
     <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center p-6">
       <div className="container max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
         {/* Left side - Features */}
@@ -203,5 +204,6 @@ export default function Signup() {
         </div>
       </div>
     </div>
+    </Fade>
   );
 }

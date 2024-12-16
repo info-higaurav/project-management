@@ -19,6 +19,7 @@ import { Checkbox } from "../../components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card"
 
 import loginValidationSchema from "@/helper/validation/login validation"
+import Fade from "@/helper/motion/fade/fade"
 
 
 export default function Login() {
@@ -65,6 +66,7 @@ export default function Login() {
     }
 
     return (
+        <Fade>
         <div className="min-h-screen flex bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
             {/* Left side - Workflow Animation */}
             <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12">
@@ -193,5 +195,6 @@ export default function Login() {
                 </Card>
             </div>
         </div>
+        </Fade>
     )
 }
