@@ -283,8 +283,8 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col w-full md:w-[calc(100%-18rem)] overflow-hidden">
         {/* Top Bar */}
-        <header className="bg-white/5 backdrop-blur-xl">
-          <div className="flex items-center justify-between px-4 sm:px-8 py-4">
+        <header className="bg-white/5 backdrop-blur-xl rounded-b-2xl">
+          <div className="flex items-center justify-between px-4 sm:px-8 py-4 ">
             <div className="flex-1 max-w-[50%] md:max-w-xl">
               <div className="relative">
                 <Input 

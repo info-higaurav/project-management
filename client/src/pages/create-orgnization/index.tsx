@@ -55,7 +55,7 @@ export default function CreateOrganization({ onClose, setShowCreateForm }: Creat
         setIsClosing(true);
         setTimeout(() => {
             setShowCreateForm(false);
-        }, 300); // Match this with CSS animation duration
+        }, 300);
     };
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -87,24 +87,24 @@ export default function CreateOrganization({ onClose, setShowCreateForm }: Creat
 
     return (
         <div className={cn(
-            "fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             isClosing && "data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-[48%]"
         )}>
             <div className={cn(
-                "w-full max-w-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=open]:slide-in-from-left-1/2 duration-300",
+                "w-full max-w-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=open]:slide-in-from-left-1/2 duration-300",
                 isClosing && "data-[state=closed]:slide-out-to-left-1/2"
             )}>
-                <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 shadow-2xl border-none rounded-2xl overflow-hidden">
-                    <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white space-y-3 px-8 py-6">
+                <Card className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden">
+                    <CardHeader className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border-b border-gray-700/50 space-y-3 px-8 py-6">
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-3xl font-bold">
+                            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                                 Create Organization
                             </CardTitle>
                             <Button 
                                 variant="ghost" 
                                 size="icon"
                                 onClick={handleClose}
-                                className="rounded-full hover:bg-white/20 text-white"
+                                className="rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
                             >
                                 <svg 
                                     xmlns="http://www.w3.org/2000/svg" 
@@ -122,19 +122,19 @@ export default function CreateOrganization({ onClose, setShowCreateForm }: Creat
                                 </svg>
                             </Button>
                         </div>
-                        <CardDescription className="text-white/80 text-lg">
+                        <CardDescription className="text-gray-400 text-lg">
                             Create a new organization to manage your projects and team members efficiently.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6 p-8">
                         {error && (
-                            <Alert variant="destructive" className="border-2 border-red-200 bg-red-50">
-                                <AlertDescription className="text-red-600">{error}</AlertDescription>
+                            <Alert variant="destructive" className="border border-red-500/20 bg-red-500/10">
+                                <AlertDescription className="text-red-400">{error}</AlertDescription>
                             </Alert>
                         )}
                         {success && (
-                            <Alert className="border-2 border-green-200 bg-green-50">
-                                <AlertDescription className="text-green-600">{success}</AlertDescription>
+                            <Alert className="border border-green-500/20 bg-green-500/10">
+                                <AlertDescription className="text-green-400">{success}</AlertDescription>
                             </Alert>
                         )}
                         <Form {...form}>
@@ -144,16 +144,16 @@ export default function CreateOrganization({ onClose, setShowCreateForm }: Creat
                                     name="organizationName"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-gray-700 text-lg font-semibold">Organization Name</FormLabel>
+                                            <FormLabel className="text-gray-300 text-lg font-medium">Organization Name</FormLabel>
                                             <FormControl>
                                                 <Input 
                                                     placeholder="Enter organization name" 
                                                     {...field} 
                                                     disabled={isLoading}
-                                                    className="h-12 border-2 border-indigo-100 focus:border-indigo-500 rounded-xl bg-white/50 backdrop-blur-sm"
+                                                    className="h-12 bg-gray-800/50 border border-gray-700 focus:border-indigo-500 text-white placeholder:text-gray-500 rounded-xl transition-colors"
                                                 />
                                             </FormControl>
-                                            <FormMessage className="text-red-500" />
+                                            <FormMessage className="text-red-400" />
                                         </FormItem>
                                     )}
                                 />
@@ -162,29 +162,29 @@ export default function CreateOrganization({ onClose, setShowCreateForm }: Creat
                                     name="organizationDescription"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-gray-700 text-lg font-semibold">Description</FormLabel>
+                                            <FormLabel className="text-gray-300 text-lg font-medium">Description</FormLabel>
                                             <FormControl>
                                                 <Textarea 
                                                     placeholder="Enter organization description" 
-                                                    className="resize-none h-32 border-2 border-indigo-100 focus:border-indigo-500 rounded-xl bg-white/50 backdrop-blur-sm" 
+                                                    className="resize-none h-32 bg-gray-800/50 border border-gray-700 focus:border-indigo-500 text-white placeholder:text-gray-500 rounded-xl transition-colors" 
                                                     {...field} 
                                                     disabled={isLoading}
                                                 />
                                             </FormControl>
-                                            <FormMessage className="text-red-500" />
+                                            <FormMessage className="text-red-400" />
                                         </FormItem>
                                     )}
                                 />
-                                <div className="flex gap-4 pt-6">
+                                <div className="flex gap-4 pt-8">
                                     <Button 
                                         type="submit" 
-                                        className="flex-1 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg rounded-xl"
+                                        className="flex-1 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-indigo-500/25"
                                         disabled={isLoading}
                                     >
                                         {isLoading ? (
-                                            <span className="flex items-center justify-center">
+                                            <span className="flex items-center justify-center gap-2">
                                                 <svg 
-                                                    className="animate-spin -ml-1 mr-3 h-5 w-5" 
+                                                    className="animate-spin h-5 w-5" 
                                                     xmlns="http://www.w3.org/2000/svg" 
                                                     fill="none" 
                                                     viewBox="0 0 24 24"
@@ -212,7 +212,7 @@ export default function CreateOrganization({ onClose, setShowCreateForm }: Creat
                                     <Button 
                                         type="button" 
                                         variant="outline"
-                                        className="flex-1 h-12 border-2 border-indigo-200 hover:bg-indigo-50 text-indigo-600 text-lg rounded-xl"
+                                        className="flex-1 h-12 border border-gray-700 hover:bg-gray-800/50 text-gray-300 hover:text-white text-lg font-medium rounded-xl transition-colors"
                                         onClick={handleClose}
                                         disabled={isLoading}
                                     >

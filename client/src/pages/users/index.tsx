@@ -47,7 +47,7 @@ export default function Users() {
   }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 rounded-xl">
             <div className="max-w-7xl mx-auto">
                 <div className="flex items-center gap-3 mb-8">
                     <h1 className="text-3xl font-bold text-white">Team Members</h1>
