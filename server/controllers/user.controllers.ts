@@ -107,7 +107,7 @@ export const profile = async(req:Request & {user?: any}, res:Response, next:Next
    if(profile !== null){
       return ApiResponse.success([profile], "profile fetched successfully", 200).send(res);
    }
-   return ApiResponse.failure([], "profile not found", 404).send(res);
+   return ApiResponse.failure([], "User not found", 404).send(res);
    
 }
 

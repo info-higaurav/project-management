@@ -29,7 +29,7 @@ import {
 import {useEffect, useState } from "react"
 import axios from "axios"
 import { Loader } from "@/helper/loader"
-import Expire from "@/helper/expire"
+
 
 const formSchema = z.object({
     projectName: z.string().min(2, {
@@ -84,7 +84,6 @@ export default function CreateProject() {
             
             if (response.status === 201) {
                 form.reset();
-                console.log(response.data.message)  
                 setPmsg(response.data.message)
                 return;
             }
@@ -116,7 +115,7 @@ export default function CreateProject() {
         return <Loader />
     }
     if (error) {
-        return <Expire message={error} />
+        <h1>No Project Found</h1>
     }
 
     useEffect(()=>{

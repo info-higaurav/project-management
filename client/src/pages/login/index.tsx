@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useState } from "react"
 import * as z from "zod"
 import { NavLink, useNavigate } from "react-router-dom"
+import { Copy } from "lucide-react"
 
 import { Button } from "../../components/ui/button"
 import {
@@ -25,6 +26,8 @@ import Fade from "@/helper/motion/fade/fade"
 export default function Login() {
     const [loading , setLoading]=useState(false)
     const [error, setError] = useState('')
+    const [showCredentials, setShowCredentials] = useState(false)
+    const [copySuccess, setCopySuccess] = useState<string>('')
     const navigate = useNavigate()
     // handling form data
     const form = useForm<z.infer<typeof loginValidationSchema>>({
@@ -62,6 +65,23 @@ export default function Login() {
         finally {
             setLoading(false)
             
+        }
+    }
+
+    const handleDemoCredentials = () => {
+        form.setValue('emailAddress', 'admin@gmail.com')
+        form.setValue('password', 'Admin@12345')
+        setShowCredentials(true)
+        setTimeout(() => setShowCredentials(false), 5000)
+    }
+
+    const copyToClipboard = async (text: string, type: string) => {
+        try {
+            await navigator.clipboard.writeText(text)
+            setCopySuccess(`${type} copied!`)
+            setTimeout(() => setCopySuccess(''), 2000)
+        } catch (err) {
+            setCopySuccess('Failed to copy!')
         }
     }
 
@@ -111,6 +131,43 @@ export default function Login() {
                         <CardDescription className="text-gray-400">
                             Please sign in to your account
                         </CardDescription>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleDemoCredentials}
+                            className="mt-4 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/50 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300"
+                        >
+                             Use Demo Credentials 👆
+                        </Button>
+                        {showCredentials && (
+                            <div className="mt-4 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-emerald-300 text-sm">Email: admin@gmail.com</p>
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0 text-emerald-300 hover:text-emerald-200"
+                                        onClick={() => copyToClipboard('admin@gmail.com', 'Email')}
+                                    >
+                                        <Copy className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <p className="text-emerald-300 text-sm">Password: Admin@12345</p>
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0 text-emerald-300 hover:text-emerald-200"
+                                        onClick={() => copyToClipboard('Admin@12345', 'Password')}
+                                    >
+                                        <Copy className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                                {copySuccess && (
+                                    <p className="text-emerald-300 text-xs mt-2 text-center">{copySuccess}</p>
+                                )}
+                            </div>
+                        )}
                     </CardHeader>
                     <CardContent>
                         <Form {...form}>

@@ -1,14 +1,26 @@
+import axios from "axios";
 import {useState } from "react";
-import CreateOrganization from "../create-orgnization";
-import useGetNetwork from "@/utils/hooks/useNetwork/useGetNetwork";
+import { useQuery } from "@tanstack/react-query";
 import { Loader } from "@/helper/loader";
+import Expire from "@/helper/expire";
+
+import CreateOrganization from "../create-orgnization";
+
+const loadOrganizations = async() => {
+    const endpoint = import.meta.env.VITE_API_URL;
+    const response = await axios.get(`${endpoint}/api/v1/admin/organizations`, {
+        withCredentials: true
+    })
+    return response.data.data
+}
 
 export default function Organization() {
     const [showCreateForm, setShowCreateForm] = useState(false);
-    // @ts-ignore
-    const [loading, error, message, data] = useGetNetwork(`/api/v1/admin/organizations`);
+    const {data=[], isLoading, isError} = useQuery({queryKey:["organizations"], queryFn:loadOrganizations})
 
-    if(loading) return <Loader/>
+
+    if(isLoading) return <Loader/>
+    if(isError) return <Expire message={(isError as any).response?.data.message} type="failure"/>
 
     return (
         <div className="p-4 relative">

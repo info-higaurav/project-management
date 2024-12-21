@@ -1,85 +1,29 @@
-import { useEffect, useState } from "react";
-import CreateProject from "../create-project";
+
 import axios from "axios";
+import {useQuery} from '@tanstack/react-query'
 import { Loader } from "@/helper/loader";
 import Expire from "@/helper/expire";
 
-interface IProject {
-    _id: string;
-    projectName: string;
-    projectStartDate: string;
-    projectEndDate: string;
-    projectDescription: string;
-    projectManagerId: {
-        _id: string;
-        firstName: string;
-        lastName: string;
-        emailAddress: string;
-        isEmailVerified: boolean;
-        userRole: string;
-        phoneNumber: string;
-        dateOfBirth: string;
-        address: {
-            street: string;
-            city: string;
-            state: string;
-            pinCode: string;
-            country: string;
-            _id: string;
-        };
-        profilePicture: string;
-        createdAt: string;
-        updatedAt: string;
-        __v: number;
-    };
-    projectOrgnizationId: {
-        _id: string;
-        organizationName: string;
-        organizationDescription: string;
-        createdBy: string;
-        createdAt: string;
-        updatedAt: string;
-        __v: number;
-    };
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
+import CreateProject from "../create-project";
+
+const loadProjects = async() => {
+    const endpoint = import.meta.env.VITE_API_URL;          
+    const response = await axios.get(`${endpoint}/api/v1/managment/projects`, {
+        withCredentials: true
+    })
+    return response.data.data
 }
-
 export default function Project({userRole}:{userRole:string}) {
-    const [data, setData] = useState<IProject[]>([])
-    const [err, setErr]=useState('')
-    const [loading , setLoading]=useState(false)
-
-    useEffect(()=>{
-        (async()=>{
-          try {
-            setLoading(true)
-            const accessToken = localStorage.getItem("accessToken") || "";
-            const endpoint = import.meta.env.VITE_API_URL;
-            const response = await axios.get(`${endpoint}/api/v1/managment/projects`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`
-              },
-              withCredentials: true
-            })
-            setData(response.data.data)
-          } catch (error:any) {
-            setErr(error.response.data.message)
-          }finally{
-            setLoading(false)
-          }
-          
-        })()
-      },[])
+    const {data=[], isLoading, isError} = useQuery({queryKey:["projects"], queryFn:loadProjects})
     
-      if(loading){
+      if(isLoading){
         return <Loader/>
       }
-      if(err){
-        return <Expire message={err}/>
+      if(isError){
+        return <Expire message={(isError as any).response?.data.message} type="failure"/>
       }
-console.log(data)
+
+
     return (
         <div className="min-h-screen bg-gradient-to-br bg-black/10 backdrop-blur-xl p-6 rounded-2xl border-white/10">
             <div className="max-w-7xl mx-auto">
@@ -94,7 +38,7 @@ console.log(data)
                             <p className="text-white/70">No projects found</p>
                         </div>
                     ) : (
-                        data.map(project => (
+                        data.map((project:any) => (
                             <div 
                                 key={project._id}
                                 className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-xl rounded-2xl border border-white/10 p-8 w-full hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300"

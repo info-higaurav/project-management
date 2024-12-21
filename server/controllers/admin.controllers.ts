@@ -113,7 +113,6 @@ export const getManagers = async(req:Request, res:Response, next:NextFunction)=>
         return ApiResponse.failure([], "Unauthorized", 401).send(res);
     }
     const managerList = await userServices.getManagers();
-    console.log(managerList)
     if(managerList.length === 0){
         return ApiResponse.failure([],"No  found",401).send(res)
     }

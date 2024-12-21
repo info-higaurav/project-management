@@ -1,44 +1,26 @@
 import Expire from "@/helper/expire";
 import { Loader } from "@/helper/loader";
 import axios from "axios";
-import { useEffect } from "react";
+import { useQuery } from '@tanstack/react-query'
+const loadUsers = async() => {
+  const endpoint = import.meta.env.VITE_API_URL;
+  const response = await axios.get(`${endpoint}/api/v1/admin/users`, {
+    withCredentials: true
+  })
+  return response.data.data
+}
 
-import { useState } from "react"
 
 export default function Users() {
-    const [data , setData] = useState<any>([])
-    const [loading , setLoading] = useState(false)
-    const [error , setError] = useState("")
+    const {data=[], isLoading, isError} = useQuery({queryKey:["users"], queryFn:loadUsers})
 
-  useEffect(()=>{
-    (async()=>{
-      try {
-        setLoading(true)
-        const accessToken = localStorage.getItem("accessToken") || "";
-        const endpoint = import.meta.env.VITE_API_URL;
-        const response = await axios.get(`${endpoint}/api/v1/admin/users`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          },
-          withCredentials: true
-        })
-        setData(response.data.data)
-      } catch (error:any) {
-        setError(error.response.data.message)
-      }finally{
-        setLoading(false)
-      }
-      
-    })()
-  },[])
-
-  if(loading){
+  if(isLoading){
     return <div className="flex justify-center items-center relative h-full">
         <Loader/>
     </div>
   }
-  if(error){
-    return <Expire message={error}/>
+  if(isError){
+    return <Expire message={(isError as any).response?.data.message} type="failure"/>
   }
   if(data.length === 0){
     return <div className="flex justify-center items-center relative h-full">

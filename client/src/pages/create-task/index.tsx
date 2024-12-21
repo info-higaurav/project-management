@@ -36,8 +36,6 @@ export default function CreateTask() {
     const [users, setUsers] = useState([])
     const [msg , setMsg]=useState('')
 
-    console.log(msg)
-
     useEffect(() => {
         const fetchData = async () => {
             try {

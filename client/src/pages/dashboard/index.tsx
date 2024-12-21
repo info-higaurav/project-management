@@ -1,11 +1,16 @@
-import { useEffect, useState } from "react";
+
+import axios from "axios";
+import { useState } from "react";
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from "react-router-dom";
+
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { LogOut} from "lucide-react";
-import axios from "axios";
 
+import Fade from "@/helper/motion/fade/fade";
 import Expire from "@/helper/expire";
+
 import Profile from "../profile";
 import Users from "../users";
 import { AccessDenied } from "../access-denied";
@@ -16,50 +21,35 @@ import Cards from "../cards";
 import ProfileCard from "../profile-card";
 import DashboardSkeleton from "@/helper/skeleton/DashboardSkeleton";
 
-import Fade from "@/helper/motion/fade/fade";
 import Organization from "../orgnization";
 
+const loadDashboard = async() => {
+  const endpoint = import.meta.env.VITE_API_URL;
+  const response = await axios.get(`${endpoint}/api/v1/managment/profile`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true
+  })
+  return response.data.data
+}
+
 export default function Dashboard() {
+    const {data=[], isLoading, isError , error} = useQuery({queryKey:["dashboard"], queryFn:loadDashboard})
+
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const [data , setData] = useState<any>([])
-  const [loading , setLoading] = useState(false)
-  const [error , setError] = useState("")
 
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true)
-        const endpoint = import.meta.env.VITE_API_URL;
-        const response = await axios.get(`${endpoint}/api/v1/managment/profile`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true
-        })
-        
-        setData(response.data.data)
 
-      } catch (error: any) {
-        setError(error.response?.data.message)
-        setTimeout(() => {
-          navigate("/login")
-        }, 5000)
-      } finally {
-        setLoading(false)
-      }
-    })()
-  }, [])
 
-  if(loading){
+  if(isLoading){
     return <DashboardSkeleton/>
   }
-  if(error){
-    return <Expire message={error}/>
+  if(isError){
+    return <Expire message={(error as any).response?.data.message} type="failure" redirectUrl="/signup" subtitle="Please sign up to continue"/>
   }
-
 
   const handleLogout = async() => {
     try {
