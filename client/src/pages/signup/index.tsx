@@ -69,8 +69,8 @@ export default function Signup() {
 
   return (
     <Fade>
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center p-6">
-      <div className="container max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center p-6">
+      <div className="container  mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
         {/* Left side - Features */}
         <div className="w-full lg:w-1/2 text-white space-y-8 p-8">
           <div className="flex items-center text-2xl font-bold mb-8">
@@ -113,13 +113,13 @@ export default function Signup() {
         </div>
 
         {/* Right side - Signup Form */}
-        <div className="w-full max-w-[420px] bg-white/95 dark:bg-zinc-900/95 rounded-2xl shadow-xl backdrop-blur-sm">
+        <div className="w-full max-w-[420px] bg-gray-900/95 dark:bg-zinc-900/95 rounded-2xl shadow-xl backdrop-blur-sm border border-gray-800">
           <div className="p-8">
             <div className="flex flex-col space-y-3 text-center mb-8">
-              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-200 via-purple-400 to-violet-200 bg-clip-text text-transparent">
                 Get Started Today
               </h1>
-              <p className="text-base text-muted-foreground">
+              <p className="text-base text-gray-400">
                 Join our project flow platform
               </p>
             </div>
@@ -130,15 +130,15 @@ export default function Signup() {
                   name="emailAddress"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base">Email</FormLabel>
+                      <FormLabel className="text-base text-gray-300">Email</FormLabel>
                       <FormControl>
                         <Input 
-                          className="bg-gray-50/50 placeholder:text-gray-400 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
+                          className="bg-gray-800/50 placeholder:text-gray-500 text-gray-200 dark:bg-zinc-800/50 rounded-lg border-gray-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 transition-all" 
                           placeholder="sample@gmail.com" 
                           {...field} 
                         />
                       </FormControl>
-                      <FormMessage className="text-red-500 font-medium" />
+                      <FormMessage className="text-red-400 font-medium" />
                     </FormItem>
                   )}
                 />
@@ -147,16 +147,16 @@ export default function Signup() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base">Password</FormLabel>
+                      <FormLabel className="text-base text-gray-300">Password</FormLabel>
                       <FormControl>
                         <Input 
-                          className="bg-gray-50/50 placeholder:text-gray-400 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
+                          className="bg-gray-800/50 placeholder:text-gray-500 text-gray-200 dark:bg-zinc-800/50 rounded-lg border-gray-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 transition-all" 
                           type="password" 
                           placeholder="Create a secure password" 
                           {...field} 
                         />
                       </FormControl>
-                      <FormMessage className="text-red-500 font-medium" />
+                      <FormMessage className="text-red-400 font-medium" />
                     </FormItem>
                   )}
                 />
@@ -165,21 +165,21 @@ export default function Signup() {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base">Confirm Password</FormLabel>
+                      <FormLabel className="text-base text-gray-300">Confirm Password</FormLabel>
                       <FormControl>
                         <Input 
-                          className="bg-gray-50/50 placeholder:text-gray-400 dark:bg-zinc-800/50 rounded-lg border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all" 
+                          className="bg-gray-800/50 placeholder:text-gray-500 text-gray-200 dark:bg-zinc-800/50 rounded-lg border-gray-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 transition-all" 
                           type="password" 
                           placeholder="Verify your password" 
                           {...field} 
                         />
                       </FormControl>
-                      <FormMessage className="text-red-500 font-medium" />
+                      <FormMessage className="text-red-400 font-medium" />
                     </FormItem>
                   )}
                 />
                 <Button 
-                  className="w-full bg-gradient-to-r rounded-xl from-blue-500 via-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity text-lg font-medium h-11" 
+                  className="w-full bg-gradient-to-r rounded-xl from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white hover:opacity-90 transition-opacity text-lg font-medium h-11 border border-gray-700" 
                   type="submit" 
                   disabled={isLoading}
                 >
@@ -188,14 +188,14 @@ export default function Signup() {
                   )}
                   Create Account
                 </Button>
-                {error && <p className="text-center text-orange-600">{error}</p>}
+                {error && <p className="text-center text-orange-400">{error}</p>}
               </form>
             </Form>
-            <p className="text-center text-sm text-muted-foreground mt-6">
+            <p className="text-center text-sm text-gray-400 mt-6">
               Already have an account?{" "}
               <NavLink
                 to="/login"
-                className="text-[#FF4B4B] hover:text-[#2EADA4] transition-colors font-medium"
+                className="text-violet-400 hover:text-violet-300 transition-colors font-medium"
               >
                 Sign in
               </NavLink>

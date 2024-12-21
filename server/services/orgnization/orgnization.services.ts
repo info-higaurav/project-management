@@ -1,5 +1,5 @@
-import Org, { IOrganization } from "../../model/orgnization.model";
-
+import Org, { IOrganization } from "../../model/organization.model";
+import { organizationValidation } from "./organization.validation";
 class OrganizationServices {
 
     async createOrganization(payload:IOrganization) {
@@ -8,8 +8,12 @@ class OrganizationServices {
     }
 
     async getOrganizations(){
-        const organizations = await Org.find({});
+        const organizations = await Org.find({}).populate("createdBy","-password -accessToken -__v -createdAt -refreshToken");
         return organizations;
+    }
+    async validateOrganization(payload:IOrganization){
+        const validatedOrganization = organizationValidation.parse(payload);
+        return validatedOrganization;
     }
 
 }

@@ -13,6 +13,10 @@ class ProjectServices{
             .populate({
                 path: "projectManagerId",
                 select: "-password -accessToken -refreshToken"
+            })
+            .populate({
+                path: "projectOrgnizationId",
+                select: "-__v"
             });
         return projects;
     }

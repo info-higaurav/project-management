@@ -26,7 +26,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import {useState } from "react"
+import {useEffect, useState } from "react"
 import axios from "axios"
 import { Loader } from "@/helper/loader"
 import Expire from "@/helper/expire"
@@ -41,44 +41,23 @@ const formSchema = z.object({
         message: "Project description must be at least 10 characters.",
     }),
     projectManagerId: z.string(),
+    projectOrgnizationId: z.string(),
 })
 
 export default function CreateProject() {
-    const [managers, setManagers] = useState([])
-    const [mloading, setMloading]=useState(false)
-    const [merr , setMerr]=useState('')
+    const [organizationsList, setOrganizationsList] = useState([])
+    const [managersList, setManagersList] = useState([])
 
     const [ploading, setPloading]=useState(false)
     const [perror, setPerror]=useState('')
     const [pmsg, setPmsg]=useState('')
     //@ts-ignore
-    const [error, setError] = useState('')
-    //@ts-ignore
+    // @ts-ignore
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
     const [open, setOpen] = useState(false)
 
-    console.log(merr, perror)
     
-   async function handleManagersList(){
-          try {
-            setMloading(true)
-            const accessToken = localStorage.getItem("accessToken") || "";
-            const endpoint = import.meta.env.VITE_API_URL;
-            const response = await axios.get(`${endpoint}/api/v1/admin/managers`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`
-              },
-              withCredentials: true
-            })
-            console.log(response.data.data)
-            setManagers(response.data.data)
-          } catch (error:any) {
-            setMerr(error.response.data.message)
-          }finally{
-            setMloading(false)
-          }
-        
-}
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -88,6 +67,7 @@ export default function CreateProject() {
             projectEndDate: "",
             projectDescription: "",
             projectManagerId: "",
+            projectOrgnizationId: "",
         },
     })
 
@@ -144,10 +124,40 @@ export default function CreateProject() {
     if (error) {
         return <Expire message={error} />
     }
+
+    useEffect(()=>{
+        const getManagersAndOrganizations = async () => {
+            try {
+                const endpoint = import.meta.env.VITE_API_URL;
+                const [managersResponse, organizationsResponse] = await Promise.all([
+                    axios.get(`${endpoint}/api/v1/admin/managers`, {
+                        withCredentials: true
+                    }),
+                    axios.get(`${endpoint}/api/v1/admin/organizations`, {
+                        withCredentials: true
+                    })
+                ]);
+
+                if (managersResponse.data?.data) {
+                    setManagersList(managersResponse.data.data);
+                }
+
+                if (organizationsResponse.data?.data) {
+                    setOrganizationsList(organizationsResponse.data.data);
+                }
+
+            } catch (error: any) {
+                console.error('Error fetching data:', error);
+                setError(error.response?.data?.message || 'Failed to fetch data');
+            }
+        };
+
+        getManagersAndOrganizations();
+    },[])
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button onClick={handleManagersList} variant="outline" className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-full">
+                <Button  variant="outline" className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-full">
                     + New Project
                 </Button>
             </DialogTrigger>
@@ -244,6 +254,36 @@ export default function CreateProject() {
                             )}
                         />
 
+                        
+<FormField
+                            control={form.control}
+                            name="projectOrgnizationId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-white">Organization</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger className="bg-white/10 text-white border-white/20 rounded-xl">
+                                                <SelectValue placeholder="Select Organization"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className="bg-indigo-900 border-white/20 rounded-xl">
+                                        {
+                                                organizationsList?.map((org)=>{
+                                                    return(
+                                                        <>
+                                                            <SelectItem value={(org as any)._id} className="text-white">{org.organizationName}</SelectItem>
+                                                        </>
+                                                    )
+                                                })
+                                            }
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage className="text-red-300" />
+                                </FormItem>
+                            )}
+                        />
+
                         <FormField
                             control={form.control}
                             name="projectManagerId"
@@ -253,12 +293,12 @@ export default function CreateProject() {
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
                                             <SelectTrigger className="bg-white/10 text-white border-white/20 rounded-xl">
-                                                <SelectValue placeholder={mloading ? 'Loading...' : 'Select Project Manager'} />
+                                                <SelectValue placeholder="Select Project Manager"/>
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="bg-indigo-900 border-white/20 rounded-xl">
                                         {
-                                                managers?.map((manager)=>{
+                                                managersList?.map((manager)=>{
                                                     return(
                                                         <>
                                                             <SelectItem value={(manager as any)._id}>{(manager as {firstName: string; lastName: string})?.firstName} {(manager as {firstName: string; lastName: string})?.lastName}</SelectItem>

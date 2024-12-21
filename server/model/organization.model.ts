@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
 
 export interface IOrganization {
-    name: string;
-    description: string;
+    organizationName: string;
+    organizationDescription: string;
     createdBy: string;
 }
 
 const organizationSchema = new mongoose.Schema({ 
-    name: {
+    organizationName: {
         type: String,
         required: true
     },
-    description: {
+    organizationDescription: {
         type: String,
         required: true
     },

@@ -20,7 +20,10 @@ export const projectValidation = z.object({
     .min(1, {message: "Project description is required"}),
     projectManagerId:z.string()
     .regex(/^[0-9a-fA-F]{24}$/, {message: "Invalid project manager ID"})
-    .min(1, {message: "Project manager is required"})
+    .min(1, {message: "Project manager is required"}),
+    projectOrgnizationId:z.string()
+    .regex(/^[0-9a-fA-F]{24}$/, {message: "Invalid organization ID"})
+    .min(1, {message: "Organization is required"})
 })
 
 export type CreateProjectType = z.infer<typeof projectValidation>;

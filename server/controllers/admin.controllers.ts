@@ -125,8 +125,9 @@ export const getManagers = async(req:Request, res:Response, next:NextFunction)=>
 export const createOrganization = async(req:Request, res:Response, next:NextFunction)=>{
     const organization = req.body;
     const userId = (req as any).user._id;
-    const payload = {...organization, createdBy:userId}
     const organizationService = new OrganizationServices();
+    const payload = {...organization, createdBy:userId}
+    const validateOrganization = organizationService.validateOrganization(payload);
     const response = await organizationService.createOrganization(payload);
     return ApiResponse.success(response, "Organization created successfully", 200).send(res);
 }

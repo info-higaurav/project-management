@@ -45,7 +45,7 @@ const projectSchema = new Schema<IProject>({
     },
     projectOrgnizationId:{
         type:Schema.Types.ObjectId,
-        ref:"Org",
+        ref:"Organization",
         required:true
     }
 },{timestamps:true})
