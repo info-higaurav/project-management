@@ -6,6 +6,7 @@ interface IProject extends Document{
     projectEndDate:Date;
     projectDescription:string;
     projectManagerId:Schema.Types.ObjectId;
+    projectOrgnizationId:Schema.Types.ObjectId;
 }
 
 const projectSchema = new Schema<IProject>({
@@ -40,6 +41,11 @@ const projectSchema = new Schema<IProject>({
     projectManagerId:{
         type:Schema.Types.ObjectId,
         ref:"User",
+        required:true
+    },
+    projectOrgnizationId:{
+        type:Schema.Types.ObjectId,
+        ref:"Org",
         required:true
     }
 },{timestamps:true})

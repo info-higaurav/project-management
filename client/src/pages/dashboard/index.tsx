@@ -17,6 +17,7 @@ import ProfileCard from "../profile-card";
 import DashboardSkeleton from "@/helper/skeleton/DashboardSkeleton";
 
 import Fade from "@/helper/motion/fade/fade";
+import Organization from "../orgnization";
 
 export default function Dashboard() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -107,10 +108,11 @@ export default function Dashboard() {
     { name: "Documents", icon: "📄" },
     { name: "Messages", icon: "💬" },
     { name: "Analytics", icon: "📈" },
-    { name: "Settings", icon: "⚙️" }
+    { name: "Settings", icon: "⚙️" },
+    { name: "Organizations", icon: "🏢" }
   ];
 
-  const admin =["Home","Profile","Projects","Users"]
+  const admin =["Home","Profile","Projects","Users","Organizations"]
   const manager =["Profile","Projects","Tasks"]
   const user =["Profile","Tasks"]
 
@@ -129,6 +131,8 @@ export default function Dashboard() {
       return roles.includes(data[0]?.userRole) ? <Project userRole={data[0]?.userRole}/> : <AccessDenied/>
     }else if(activeTab === "Tasks"){
       return data[0].userRole === "user" ? <Task/> : data[0].userRole === "manager" ? <ManageTask userRole={data[0]?.userRole}/> : <AccessDenied/>
+    }else if(activeTab === "Organizations"){
+      return data[0].userRole === "admin" ? <Organization/> : <AccessDenied/>
     }
     return null;
   };

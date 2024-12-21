@@ -6,6 +6,7 @@ import { projectValidation } from "../services/project/project.validation";
 import validateTask from "../services/task/task.validation";
 import TaskServices from "../services/task/task.services";
 import userRoute from "../routes/user.routes";
+import OrganizationServices from "../services/orgnization/orgnization.services";
 
 export const getUsers = async(req:Request, res:Response, next:NextFunction)=>{
     const user = (req as any).user;
@@ -120,3 +121,19 @@ export const getManagers = async(req:Request, res:Response, next:NextFunction)=>
     
 
 }
+
+export const createOrganization = async(req:Request, res:Response, next:NextFunction)=>{
+    const organization = req.body;
+    const userId = (req as any).user._id;
+    const payload = {...organization, createdBy:userId}
+    const organizationService = new OrganizationServices();
+    const response = await organizationService.createOrganization(payload);
+    return ApiResponse.success(response, "Organization created successfully", 200).send(res);
+}
+
+export const getOrganizations = async(req:Request, res:Response, next:NextFunction)=>{
+    const organizationService = new OrganizationServices();
+    const response = await organizationService.getOrganizations();
+    return ApiResponse.success(response, "Organization list fetched successfully", 200).send(res);
+}
+
