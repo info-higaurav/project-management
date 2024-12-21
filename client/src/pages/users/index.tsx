@@ -47,17 +47,20 @@ export default function Users() {
   }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
             <div className="max-w-7xl mx-auto">
-            <span className="text-orange-300 animate-pulse">{data?.length}</span>
-                <h1 className="text-3xl font-bold text-white mb-8">Team Members </h1>
-                
+                <div className="flex items-center gap-3 mb-8">
+                    <h1 className="text-3xl font-bold text-white">Team Members</h1>
+                    <span className="px-3 py-1 text-sm bg-indigo-500/20 text-indigo-300 rounded-full">
+                        {data?.length} members
+                    </span>
+                </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {data?.map((user:any) => (
-                        <div key={user.id} className="bg-black/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
+                        <div key={user.id} className="bg-gray-800/50 backdrop-blur-xl p-6 rounded-2xl border border-gray-700/50 hover:border-indigo-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/10">
                             <div className="flex items-center space-x-4 mb-4">
-                                <div className="w-16 h-16 rounded-full ring-2 ring-purple-500/30 overflow-hidden flex items-center justify-center bg-purple-500">
+                                <div className="w-16 h-16 rounded-full ring-2 ring-indigo-500/30 overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
                                     {user.profilePicture ? (
                                         <img 
                                             src={user.profilePicture}
@@ -85,21 +88,21 @@ export default function Users() {
                                     <h3 className="text-xl font-semibold text-white">
                                         {user.firstName} {user.lastName}
                                     </h3>
-                                    <p className="text-white/70 capitalize">{user.userRole.replace('_', ' ')}</p>
+                                    <p className="text-indigo-300 capitalize">{user.userRole.replace('_', ' ')}</p>
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-3 border-t border-gray-700/50 pt-4">
                                 <div>
-                                    <label className="text-white/50 text-sm">Email</label>
+                                    <label className="text-gray-400 text-sm">Email</label>
                                     <p className="text-white">{user.emailAddress}</p>
                                 </div>
                                 
                                 <div>
-                                    <label className="text-white/50 text-sm">Status</label>
+                                    <label className="text-gray-400 text-sm">Status</label>
                                     <p className="text-white flex items-center">
                                         <span className={`w-2 h-2 rounded-full mr-2 ${
-                                            user.status === 'Active' ? 'bg-green-500' : 'bg-yellow-500'
+                                            user.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'
                                         }`}></span>
                                         {user.status}
                                     </p>
