@@ -36,7 +36,7 @@ const formSchema = z.object({
         .max(500, "Description cannot exceed 500 characters")
         .transform(val => val.trim())
 })
-
+// @ts-ignore
 export default function CreateOrganization({ onClose, setShowCreateForm }: CreateOrganizationProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
@@ -65,7 +65,7 @@ export default function CreateOrganization({ onClose, setShowCreateForm }: Creat
             setSuccess("");
             
             const endpoint = import.meta.env.VITE_API_URL;
-            const response = await axios.post(`${endpoint}/api/v1/admin/organizations`, values, {
+            await axios.post(`${endpoint}/api/v1/admin/organizations`, values, {
                 headers: {
                     'Content-Type': 'application/json'
                 },

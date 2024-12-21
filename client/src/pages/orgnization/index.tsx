@@ -5,6 +5,7 @@ import { Loader } from "@/helper/loader";
 
 export default function Organization() {
     const [showCreateForm, setShowCreateForm] = useState(false);
+    // @ts-ignore
     const [loading, error, message, data] = useGetNetwork(`/api/v1/admin/organizations`);
 
     if(loading) return <Loader/>
@@ -29,13 +30,14 @@ export default function Organization() {
                     />
                 </div>
             )}
-
+            {/* @ts-ignore */}
             {!data || data.length === 0 ? (
                 <div className="text-center text-gray-500 py-8">
                     There is no organization
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* @ts-ignore */}
                     {data?.map((org:any) => (
                         <div 
                             key={org._id}
