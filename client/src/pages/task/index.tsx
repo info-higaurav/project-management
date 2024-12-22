@@ -14,7 +14,7 @@ const loadTasks = async () => {
     })
     return response.data.data
 }
-
+    
 export default function Task() {
     const queryClient = useQueryClient();
     // @ts-ignore
@@ -25,8 +25,8 @@ export default function Task() {
         setUpdatingStatus(taskId);
         try {
             const endpoint = import.meta.env.VITE_API_URL;
-            await axios.patch(`${endpoint}/api/v1/managment/tasks/${taskId}`, 
-                { taskStatus: newStatus },
+            await axios.patch(`${endpoint}/api/v1/managment/tasks`, 
+                { taskId, taskStatus: newStatus },
                 {
                     headers: { "Content-Type": "application/json" },
                     withCredentials: true

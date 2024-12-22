@@ -3,12 +3,20 @@ import z from 'zod'
 const validateTask = z.object({
     taskTitle: z.string().min(1, "Task title is required"),
     taskDescription: z.string().min(1, "Task description is required"),
-    taskStartDate: z.string().or(z.date()).transform(val => new Date(val)).refine(val => !isNaN(val.getTime()), {
-        message: "Invalid task start date"
-    }),
-    taskDueDate: z.string().or(z.date()).transform(val => new Date(val)).refine(val => !isNaN(val.getTime()), {
-        message: "Invalid task due date"
-    }),
+    taskStartDate: z.preprocess((date) => new Date(date as string | number | Date), z.date().refine((date) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date >= today;
+    }, {
+        message: "Start date cannot be in the past",
+    })),
+    taskDueDate: z.preprocess((date) => new Date(date as string | number | Date), z.date().refine((date) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date >= today;
+    }, {
+        message: "Due date cannot be in the past",
+    })),
     taskPriority: z.enum(["medium", "urgent", "low"], {
         errorMap: () => ({ message: "Task priority must be medium, urgent, or low" })
     }),

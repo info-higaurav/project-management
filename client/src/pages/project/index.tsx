@@ -14,16 +14,16 @@ const loadProjects = async() => {
     return response.data.data
 }
 export default function Project({userRole}:{userRole:string}) {
-    const {data=[], isLoading, isError} = useQuery({queryKey:["projects"], queryFn:loadProjects})
-    
+    const {data=[], isLoading, isError , error} = useQuery({queryKey:["projects"], queryFn:loadProjects})
+    console.log(error)
       if(isLoading){
         return <Loader/>
       }
       if(isError){
-        return <Expire message={(isError as any).response?.data.message} type="failure"/>
+        return <Expire message={(error as any).response?.data.message} type="failure"/>
       }
 
-
+   console.log(data)   
     return (
         <div className="min-h-screen bg-gradient-to-br bg-black/10 backdrop-blur-xl p-6 rounded-2xl border-white/10">
             <div className="max-w-7xl mx-auto">

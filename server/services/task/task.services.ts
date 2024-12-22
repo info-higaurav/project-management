@@ -37,6 +37,11 @@ class TaskServices {
         
     }
 
+    async updateTaskStatus(taskId: string, taskStatus: string) {
+        const response = await Task.findOneAndUpdate({ _id: taskId }, { taskStatus: taskStatus }, { new: true });
+        return response;
+    }
+
 }
 
 export default TaskServices;

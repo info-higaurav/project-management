@@ -134,3 +134,20 @@ export const getMyTask = async(req:Request, res:Response, next:NextFunction)=>{
    } 
    return ApiResponse.success(tasks || [], "tasks fetched successfully", 200).send(res);
 }
+
+export const updateTaskStatus = async(req:Request, res:Response, next:NextFunction)=>{
+   const userId = (req as any).user._id;
+   const userSerivce = new UserServices();
+   const taskService = new TaskServices();
+
+   const isUserExists = await userSerivce.getUser(userId);
+   console.log(isUserExists);
+   if(isUserExists === null || isUserExists === undefined ){   
+      return ApiResponse.failure([], "user not found", 404).send(res);   
+   }
+   const {taskId, taskStatus} = req.body;
+   const task = await taskService.updateTaskStatus(taskId, taskStatus);
+
+   return ApiResponse.success(task || [], "task status updated successfully", 200).send(res);
+
+}
