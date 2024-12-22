@@ -18,6 +18,7 @@ adminRoutes.route("/managers")
 adminRoutes.route("/organizations")
     .post(verifyUser,AsyncHandler(createOrganization))
     .get(verifyUser,AsyncHandler(getOrganizations));
+    
 adminRoutes.use(handleApiError)
 
 export default adminRoutes;

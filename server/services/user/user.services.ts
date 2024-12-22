@@ -1,4 +1,4 @@
-import User from "../../model/user.mode"
+import User from "../../model/user.model"
 import { SignupInput } from "./user.validation";
 import { signupSchema } from "./user.validation";
 import jwt from "jsonwebtoken";

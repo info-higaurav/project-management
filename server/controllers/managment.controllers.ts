@@ -14,9 +14,16 @@ export const createTask = async(req:Request, res:Response, next:NextFunction)=>{
     const userServices = new UserServices();
     const taskServices = new TaskServices();
     const projectServices = new ProjectServices();
+
     const whoMadeRequest = await userServices.getUser(userId);
     const isUserExists = await userServices.getUser(taskAssigneeId);
 
+    const isTaskExists = await taskServices.findTask(valTask);
+
+    if(isTaskExists){
+        return ApiResponse.failure([], "Task already exists", 400).send(res);
+    }
+    
     if(whoMadeRequest?.userRole !== "manager"){
         return ApiResponse.failure([], "Unauthorized", 401).send(res);
     }
@@ -70,3 +77,4 @@ export const getProfile = async(req:Request & {user?: any}, res:Response, next:N
     return ApiResponse.failure([], "profile not found", 404).send(res);
     
  }
+

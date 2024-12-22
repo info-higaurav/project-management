@@ -23,6 +23,10 @@ export default function Profile({ data }: any) {
                   src={profilePicture}
                   alt={`${firstName} ${lastName}`}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://cdn-icons-png.flaticon.com/512/10337/10337609.png";
+                  }}
                 />
               ) : (
                 <span className="text-4xl font-bold text-white">

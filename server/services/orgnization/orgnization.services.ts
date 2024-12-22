@@ -1,5 +1,7 @@
 import Org, { IOrganization } from "../../model/organization.model";
 import { organizationValidation } from "./organization.validation";
+import { ZodError } from 'zod';
+
 class OrganizationServices {
 
     async createOrganization(payload:IOrganization) {
@@ -12,8 +14,12 @@ class OrganizationServices {
         return organizations;
     }
     async validateOrganization(payload:IOrganization){
-        const validatedOrganization = organizationValidation.parse(payload);
-        return validatedOrganization;
+        return organizationValidation.parse(payload);
+    }
+    
+    async findOrganization(payload:IOrganization){
+        const organization = await Org.findOne({organizationName:payload.organizationName});
+        return organization;
     }
 
 }

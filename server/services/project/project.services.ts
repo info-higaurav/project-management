@@ -1,10 +1,15 @@
-import Project from "../../model/project.model";
+import Project, { IProject } from "../../model/project.model";
 import { CreateProjectType } from "./project.validation";
 
 class ProjectServices{
 
     async createProject(payload:CreateProjectType){
         const project = await Project.create(payload);
+        return project;
+    }
+
+    async findProject(payload:IProject){
+        const project = await Project.findOne({projectName:payload.projectName});
         return project;
     }
 

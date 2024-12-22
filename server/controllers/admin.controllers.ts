@@ -13,12 +13,18 @@ export const getUsers = async(req:Request, res:Response, next:NextFunction)=>{
     const service = new UserServices();
     const userData = await service.getUser(user._id);
    
-    // if(userData?.userRole !== "admin" && userData?.userRole !== "manager"){
-    //     return ApiResponse.failure([], "Unauthorized", 401).send(res);
-    // }
     if(userData?.userRole === "admin" || userData?.userRole === "manager"){
         const response = await service.getUsers();
-        return ApiResponse.success(response,"Users fetched successfully", 200).send(res)
+        if(userData?.userRole === "manager"){
+            const usersList = response.filter((user)=> user.userRole == "user")
+            return ApiResponse.success(usersList,"Users fetched successfully", 200).send(res)
+        }
+        
+        if(userData?.userRole === "admin"){
+            const userList = response?.filter((user)=> user.userRole !== "admin")
+            return ApiResponse.success(userList,"Users fetched successfully", 200).send(res)
+        }
+
     }
     return ApiResponse.failure([], "Unauthorized", 401).send(res);
     
@@ -30,14 +36,20 @@ export const createProject = async(req:Request, res:Response, next:NextFunction)
     const validateProject = projectValidation.parse(project);
 
 
-    const service = new UserServices();
-    const isUserExists = await service.getUser(userId);
-    const isManagerExists = await service.getUser(req.body.projectManagerId);
 
+    const userService = new UserServices();
+    const projectService = new ProjectServices();
+
+    const isUserExists = await userService.getUser(userId);
+    const isManagerExists = await userService.getUser(req.body.projectManagerId);
+    const isProjectExists = await projectService.findProject(req.body);
+    
+    if(isProjectExists){
+        return ApiResponse.failure([], "Project already exists", 400).send(res);
+    }   
 
     if(isUserExists?.userRole === "admin"){
         if(isManagerExists?.userRole === "manager"){
-            const projectService = new ProjectServices();
             const response = await projectService.createProject(validateProject);
             return ApiResponse.success(response,"Project created successfully", 201).send(res);
         }else{
@@ -126,9 +138,15 @@ export const createOrganization = async(req:Request, res:Response, next:NextFunc
     const userId = (req as any).user._id;
     const organizationService = new OrganizationServices();
     const payload = {...organization, createdBy:userId}
-    const validateOrganization = organizationService.validateOrganization(payload);
+    
+    // Validate and create organization
+    await organizationService.validateOrganization(payload);
+    const isAlreadyExits = await organizationService.findOrganization(payload);
+    if(isAlreadyExits){
+        return ApiResponse.failure([], "Organization already exists", 400).send(res);
+    }
     const response = await organizationService.createOrganization(payload);
-    return ApiResponse.success(response, "Organization created successfully", 200).send(res);
+    return ApiResponse.success(response, "Organization created successfully", 201).send(res);
 }
 
 export const getOrganizations = async(req:Request, res:Response, next:NextFunction)=>{
@@ -136,4 +154,3 @@ export const getOrganizations = async(req:Request, res:Response, next:NextFuncti
     const response = await organizationService.getOrganizations();
     return ApiResponse.success(response, "Organization list fetched successfully", 200).send(res);
 }
-

@@ -1,11 +1,20 @@
-import Task from "../../model/task.model";
-import Project from "../../model/project.model";
-import User from "../../model/user.mode";
+import Task, { ITask } from "../../model/task.model";
+import User from "../../model/user.model";
 
 class TaskServices {
+
     async createTask(payload:{}) {
         const response = await Task.create(payload);
         return response;
+    }
+
+    async findTask(payload: Partial<ITask> | any){
+        const task = await Task.findOne({
+            taskTitle: payload.taskTitle,
+            associatedProjectId: payload.associatedProjectId,
+            taskAssignorId: payload.taskAssignorId
+        });
+        return task;
     }
 
     async getMyTask(taskAssignorId: string) {
@@ -27,6 +36,7 @@ class TaskServices {
         }
         
     }
+
 }
 
 export default TaskServices;

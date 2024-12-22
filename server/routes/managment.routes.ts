@@ -22,5 +22,6 @@ managmentRoute.route("/projects")
 managmentRoute.route("/profile")
     .get(verifyUser,(AsyncHanlder(getProfile)))
 
+
 managmentRoute.use(handleApiError)
 export default managmentRoute;  
