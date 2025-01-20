@@ -1,4 +1,4 @@
-import {queryClient} from './../main'
+import { queryClient } from "@/main";
 import axios from "axios";
 import { useState } from "react";
 import { useQuery } from '@tanstack/react-query'
