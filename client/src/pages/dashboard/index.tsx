@@ -1,4 +1,4 @@
-
+import { QueryClient } from 'react-query';
 import axios from "axios";
 import { useState } from "react";
 import { useQuery } from '@tanstack/react-query'
@@ -59,6 +59,7 @@ export default function Dashboard() {
       })
       
       if(response.status === 200){
+         queryClient.clear()
           navigate("/login")
       }
       
